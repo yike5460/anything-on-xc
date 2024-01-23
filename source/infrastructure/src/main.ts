@@ -7,10 +7,10 @@ export class StableDiffusionStack extends Stack {
     super(scope, id, props);
 
     // cfn parameters dropdown list for ec2 instance type
-    const _ec2InstaceType = new CfnParameter(this, 'ec2-instance-type', {
+    const _ec2InstaceType = new CfnParameter(this, 'ec2InstanceType', {
       type: 'String',
       description: 'EC2 instance type',
-      default: 'g5.2xlarge',
+      default: 'g5.4xlarge',
       allowedValues: [
         'g5.2xlarge',
         'g5.4xlarge',
