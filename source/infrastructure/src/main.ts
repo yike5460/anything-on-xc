@@ -1,6 +1,7 @@
 import { App, CfnOutput, CfnParameter, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { EC2Stack } from '../lib/common/ec2-stack';
+import { PipelineStack } from '../lib/pipeline/pipeline-stack';
 
 export class StableDiffusionStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
@@ -22,6 +23,9 @@ export class StableDiffusionStack extends Stack {
       env: props.env,
     });
 
+    const _pipelineStack = new PipelineStack(this, 'pipeline-stack', {
+      env: props.env,
+    });
     // output the EC2 instance id and ALB DNS name
 
   }

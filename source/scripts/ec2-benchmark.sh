@@ -2,23 +2,26 @@
 
 INSTANCE_TYPE="g5.2xlarge"
 
+# Initial AMI
 # aws ec2 describe-images \
 #     --owners amazon \
 #     --filters "Name=name,Values=Deep Learning Base OSS Nvidia Driver GPU AMI*" "Name=is-public,Values=true" "Name=state,Values=available" \
 #     --query "Images[*].[ImageId,Name,Description]" \
 #     --region us-east-1 \
 #     --output json | jq -r 'sort_by(.[1] | capture(".* (?<date>[0-9]+)$").date | strptime("%Y%m%d") | mktime) | .[-1][0]'
+
+# Packed AMI
+# aws ec2 create-image --instance-id <instance id running on initial AMI> --name "stableDiffusionOnEc2V1" --description "AMI packed Stable Diffusion WebUI dependencies and system service launched based on Deep Learning Base OSS Nvidia Driver GPU AMI" --region us-east-1
+
 AMI_ID="ami-0da2ab58cace8997d"
 
 # aws ec2 describe-key-pairs --region us-east-1 --query 'KeyPairs[*].KeyName' --output text
-KEY_NAME="us-east-1" # Replace with your key pair name
-
+KEY_NAME="<your-key-pair-name>" # Replace with your key pair name
 
 # vpc_id=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --region us-east-1 --query 'Vpcs[*].VpcId' --output text)
-# aws ec2 describe-security-groups --filters Name=$(vpc_id),Values=vpc-4eb2f634 Name=group-name,Values=default --region us-east-1 --query 'SecurityGroups[*].GroupId' --output text
-SECURITY_GROUP=<your-security-group-id>
-
-# aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-4eb2f634 --region us-east-1 --query 'Subnets[*].SubnetId' --output text
+# aws ec2 describe-security-groups --filters Name=vpc-id,Values=vpc-your-vpc-id Name=group-name,Values=default --region us-east-1 --query 'SecurityGroups[*].GroupId' --output text
+SECURITY_GROUP=<your-sg-id>
+# aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-your-vpc-id --region us-east-1 --query 'Subnets[*].SubnetId' --output text
 SUBNET_ID=<your-subnet-id>
 ITERATIONS=5
 LAUNCH_TIMES=()
@@ -38,7 +41,35 @@ launch_instance() {
     echo "Launched instance $instance_id" >&2
 
     # Wait for the instance to become available
-    aws ec2 wait instance-running --instance-ids $instance_id --region us-east-1
+    # aws ec2 wait instance-running --instance-ids $instance_id --region us-east-1, avg 17-18s/per instance
+
+    # Poll to wait for the instance to become available, option 1, avg 9s/per instance
+    # while true; do
+    #     local instance_state=$(aws ec2 describe-instances --instance-ids $instance_id --region us-east-1 | jq -r .Reservations[0].Instances[0].State.Name)
+    #     if [[ $instance_state == "running" ]]; then
+    #         break
+    #     fi
+    #     sleep 1
+    # done
+
+    # Poll to wait for the instance to become available, option 2, avg 159s/per instance
+    while true; do
+        local instance_state=$(aws ec2 describe-instance-status --instance-ids $instance_id --region us-east-1 | jq -r .InstanceStatuses[0].InstanceStatus.Status)
+        if [[ $instance_state == "ok" ]]; then
+            break
+        fi
+        sleep 1
+    done
+
+    # TODO, application specific health check, wait for the application to be ready
+    # Curl the application using the public ip address and port 7860
+    # while true; do
+    #     local response_code=$(curl -s -o /dev/null -w "%{http_code}" http://$(aws ec2 describe-instances --instance-ids $instance_id --region us-east-1 | jq -r .Reservations[0].Instances[0].PublicIpAddress):7860)
+    #     if [[ $response_code == "200" ]]; then
+    #         break
+    #     fi
+    #     sleep 1
+    # done
 
     # Check the system log (optional validation)
     # aws ec2 get-console-output --instance-id $instance_id | grep "some validation text"
