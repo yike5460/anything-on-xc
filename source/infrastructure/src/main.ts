@@ -18,16 +18,24 @@ export class StableDiffusionStack extends Stack {
       ],
     });
 
+    // TODO, use cfn parameters or image id from pipeline stack
     const _ec2Stack = new EC2Stack(this, 'ec2-stack', {
       ec2InstanceType: _ec2InstaceType.valueAsString,
       env: props.env,
     });
 
+    // basic pipline stack to create AMI from scratch
     const _pipelineStack = new PipelineStack(this, 'pipeline-stack', {
       env: props.env,
     });
-    // output the EC2 instance id and ALB DNS name
 
+    // output the EC2 instance id and ALB DNS name
+    new CfnOutput(this, 'ec2-instance-id', {
+      value: _ec2Stack._instanceId,
+    });
+    new CfnOutput(this, 'alb-address', {
+      value: _ec2Stack._albAddress,
+    });
   }
 }
 

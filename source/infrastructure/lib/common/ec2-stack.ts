@@ -4,6 +4,7 @@ import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 import * as path from 'path';
@@ -19,6 +20,8 @@ interface ec2StackProps extends StackProps {
 export class EC2Stack extends NestedStack {
 
     _s3Name;
+    _instanceId;
+    _albAddress;
     constructor(scope: Construct, id: string, props: ec2StackProps) {
         super(scope, id, props);
 
@@ -50,9 +53,35 @@ export class EC2Stack extends NestedStack {
         _ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'allow ssh access from anywhere');
         _ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(7860), 'allow webui access from anywhere');
 
+        // Create instance role to connect to S3 bucket through storage file gateway
+        const _instanceRole = new iam.Role(this, 'sd-ec2-role', {
+            // Fix this name since we need to concatenate in user_data.sh
+            roleName: 'sd-ec2-role',
+            assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+        });
+
+        // Allow EC2 instance to connect to S3 bucket
+        _instanceRole.addToPolicy(new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: [
+                's3:GetObject',
+                's3:PutObject',
+                's3:ListBucket',
+                's3:DeleteObject',
+            ],
+            resources: [
+                _modelsBucket.bucketArn,
+                _modelsBucket.arnForObjects('*'),
+            ],
+        }));
+
+        // Allow EC2 instance to connect to SSM with full access for PVRE consideration
+        _instanceRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMFullAccess'));
+
         // Create EC2 instance inside default VPC
         const _ec2Instance = new ec2.Instance(this, 'sd-ec2-instance', {
             vpc: _defaultVpc,
+            role: _instanceRole,
             instanceType: new ec2.InstanceType(props.ec2InstanceType),
             // # aws ec2 describe-images \
             // #     --owners amazon \
@@ -121,5 +150,7 @@ export class EC2Stack extends NestedStack {
         });
 
         this._s3Name = _modelsBucket.bucketName;
+        this._instanceId = _ec2Instance.instanceId;
+        this._albAddress = lb.loadBalancerDnsName;
     }
 }

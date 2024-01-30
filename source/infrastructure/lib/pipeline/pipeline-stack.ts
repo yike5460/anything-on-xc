@@ -150,6 +150,9 @@ phases:
             schedule: {
                 scheduleExpression: 'cron(0 0 * * ? *)',
             },
+            // executionRole: role.roleName,
+            // disable metadata collection for now
+            enhancedImageMetadataEnabled: false,
         });
 
         // Output the image id

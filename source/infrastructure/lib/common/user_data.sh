@@ -9,6 +9,21 @@ sudo add-apt-repository ppa:deadsnakes/ppa -y
 sudo apt install wget git python3.10 python3.10-venv build-essential net-tools libgl1 libtcmalloc-minimal4 -y
 sudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.10 1
 
+# install s3 fuse
+sudo apt install s3fs -y
+# Fetch the credentials from the instance metadata service
+CREDENTIALS=$(curl http://169.254.169.254/latest/meta-data/iam/security-credentials/sd-ec2-role)
+
+# Parse the AccessKeyId and SecretAccessKey from the JSON
+ACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '"AccessKeyId" : "[^"]*' | grep -o '[^"]*$')
+SECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '"SecretAccessKey" : "[^"]*' | grep -o '[^"]*$')
+
+# Store them in the .passwd-s3fs file
+echo "$ACCESS_KEY_ID:$SECRET_ACCESS_KEY" > ${HOME}/.passwd-s3fs
+chmod 600 ${HOME}/.passwd-s3fs
+
+# s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs -o dbglevel=info -f -o curldbg
+
 cd /home/ubuntu
 
 curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash
