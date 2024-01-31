@@ -1,7 +1,8 @@
-import { NestedStack, StackProps, Duration, Aws } from 'aws-cdk-lib';
+import { NestedStack, StackProps, Duration, Aws, RemovalPolicy } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as efs from 'aws-cdk-lib/aws-efs';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -9,9 +10,6 @@ import { Construct } from 'constructs';
 
 import * as path from 'path';
 import * as fs from 'fs';
-
-// TODO, remove the user_data.sh file and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
-const user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8');
 
 interface ec2StackProps extends StackProps {
     ec2InstanceType: string;
@@ -34,6 +32,9 @@ export class EC2Stack extends NestedStack {
         const _modelsBucket = new s3.Bucket(this, 'sd-models', {
             blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
         });
+
+        // TODO, remove the dep install part in user_data.sh and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
+        const user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8').replace('${BUCKET_NAME}', _modelsBucket.bucketName);
 
         // Deploy models to S3 bucket
         new s3deploy.BucketDeployment(this, 'DeployModels', {
@@ -63,11 +64,9 @@ export class EC2Stack extends NestedStack {
         // Allow EC2 instance to connect to S3 bucket
         _instanceRole.addToPolicy(new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
+            // Full S3 access for s3fs connection
             actions: [
-                's3:GetObject',
-                's3:PutObject',
-                's3:ListBucket',
-                's3:DeleteObject',
+                's3:*',
             ],
             resources: [
                 _modelsBucket.bucketArn,
@@ -106,6 +105,25 @@ export class EC2Stack extends NestedStack {
             // Also note user data scripts and cloud-init directives only run during the first boot cycle of an EC2 instance by default
             userData: ec2.UserData.custom(user_data),
         });
+
+        // Create EFS file system
+        const _efsFileSystem = new efs.FileSystem(this, 'sd-efs', {
+            vpc: _defaultVpc,
+            lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
+            performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
+            throughputMode: efs.ThroughputMode.BURSTING,
+            removalPolicy: RemovalPolicy.DESTROY,
+        });
+
+        // Allow EC2 instance to connect to EFS file system
+        _efsFileSystem.connections.allowDefaultPortFrom(_ec2Instance);
+
+        // Mount EFS file system to EC2 instance
+        // const _efsMountTarget = new efs.CfnMountTarget(this, 'sd-efs-mount', {
+        //     fileSystemId: _efsFileSystem.fileSystemId,
+        //     subnetId: _defaultVpc.publicSubnets[0].subnetId,
+        //     securityGroups: [_ec2SecurityGroup.securityGroupId],
+        // });
 
         // Application load balancer
         const lb = new elbv2.ApplicationLoadBalancer(this, 'LB', {

@@ -19,49 +19,56 @@ ACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '"AccessKeyId" : "[^"]*' | grep -o '
 SECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '"SecretAccessKey" : "[^"]*' | grep -o '[^"]*$')
 
 # Store them in the .passwd-s3fs file
-echo "$ACCESS_KEY_ID:$SECRET_ACCESS_KEY" > ${HOME}/.passwd-s3fs
-chmod 600 ${HOME}/.passwd-s3fs
+TMP_FOLDER=/tmp
+echo "$ACCESS_KEY_ID:$SECRET_ACCESS_KEY" > /tmp/.passwd-s3fs
+chmod 600 ${TMP_FOLDER}/.passwd-s3fs
 
-# s3fs mybucket /path/to/mountpoint -o passwd_file=${HOME}/.passwd-s3fs -o dbglevel=info -f -o curldbg
+# execute in non root user
+sudo mkdir -p /tmp/s3-mount
+sudo chown ubuntu:ubuntu /tmp/s3-mount
 
-cd /home/ubuntu
+S3_BUCKET=${BUCKET_NAME}
+s3fs $S3_BUCKET /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log
+echo "S3 bucket $S3_BUCKET mounted at /tmp/s3-mount"
 
-curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash
+# cd /home/ubuntu
 
-cd stable-diffusion-webui/extensions/stable-diffusion-aws-extension
-git checkout main
-cd ../../
+# curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash
 
-wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/sd_xl_base_1.0.safetensors
-wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors
-wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth
-wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth
-wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors
-wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors
+# cd stable-diffusion-webui/extensions/stable-diffusion-aws-extension
+# git checkout main
+# cd ../../
 
-sudo chown -R ubuntu:ubuntu /home/ubuntu/stable-diffusion-webui
+# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/sd_xl_base_1.0.safetensors
+# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors
+# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth
+# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth
+# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors
+# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors
 
-cat > sd-webui.service <<EOF
-[Unit]
-Description=Stable Diffusion UI server
-After=network.target
-StartLimitIntervalSec=0
+# sudo chown -R ubuntu:ubuntu /home/ubuntu/stable-diffusion-webui
 
-[Service]
-WorkingDirectory=/home/ubuntu/stable-diffusion-webui
-ExecStart=/home/ubuntu/stable-diffusion-webui/webui.sh --enable-insecure-extension-access --skip-torch-cuda-test --no-half --listen
-Type=simple
-Restart=always
-RestartSec=3
-User=ubuntu
-StartLimitAction=reboot
+# cat > sd-webui.service <<EOF
+# [Unit]
+# Description=Stable Diffusion UI server
+# After=network.target
+# StartLimitIntervalSec=0
 
-[Install]
-WantedBy=default.target
+# [Service]
+# WorkingDirectory=/home/ubuntu/stable-diffusion-webui
+# ExecStart=/home/ubuntu/stable-diffusion-webui/webui.sh --enable-insecure-extension-access --skip-torch-cuda-test --no-half --listen
+# Type=simple
+# Restart=always
+# RestartSec=3
+# User=ubuntu
+# StartLimitAction=reboot
 
-EOF
-sudo mv sd-webui.service /etc/systemd/system
-sudo chown root:root /etc/systemd/system/sd-webui.service
+# [Install]
+# WantedBy=default.target
 
-sudo systemctl enable sd-webui.service
-sudo systemctl start sd-webui.service
+# EOF
+# sudo mv sd-webui.service /etc/systemd/system
+# sudo chown root:root /etc/systemd/system/sd-webui.service
+
+# sudo systemctl enable sd-webui.service
+# sudo systemctl start sd-webui.service

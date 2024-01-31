@@ -14,3 +14,6 @@
 - Consider to use custom chip, e.g. AWS Inferentia, to reduce the cost of running the cluster
 
 ## Architecture
+
+## Note
+The transfer time from s3fs mounted file to local folder is around 159 mb/s (6.5 * 1000 mb/41s) and the transfer time from local folder to s3fs mounted file is around 148 mb/s (6.5 * 1000 mb/44s)

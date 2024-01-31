@@ -25,9 +25,9 @@ export class StableDiffusionStack extends Stack {
     });
 
     // basic pipline stack to create AMI from scratch
-    const _pipelineStack = new PipelineStack(this, 'pipeline-stack', {
-      env: props.env,
-    });
+    // const _pipelineStack = new PipelineStack(this, 'pipeline-stack', {
+    //   env: props.env,
+    // });
 
     // output the EC2 instance id and ALB DNS name
     new CfnOutput(this, 'ec2-instance-id', {
