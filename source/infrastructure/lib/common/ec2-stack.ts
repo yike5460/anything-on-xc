@@ -33,9 +33,6 @@ export class EC2Stack extends NestedStack {
             blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
         });
 
-        // TODO, remove the dep install part in user_data.sh and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
-        const user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8').replace('${BUCKET_NAME}', _modelsBucket.bucketName);
-
         // Deploy models to S3 bucket
         new s3deploy.BucketDeployment(this, 'DeployModels', {
             sources: [s3deploy.Source.asset('lib/models')],
@@ -77,6 +74,22 @@ export class EC2Stack extends NestedStack {
         // Allow EC2 instance to connect to SSM with full access for PVRE consideration
         _instanceRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMFullAccess'));
 
+        // Create EFS file system
+        const _efsFileSystem = new efs.FileSystem(this, 'sd-efs', {
+            vpc: _defaultVpc,
+            lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
+            performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
+            throughputMode: efs.ThroughputMode.BURSTING,
+            removalPolicy: RemovalPolicy.DESTROY,
+        });
+
+        // TODO, remove the dep install part in user_data.sh and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
+        const user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8').replace('${BUCKET_NAME}', _modelsBucket.bucketName);
+
+        // Further replace the FS_ID e.g. replace('${FS_ID}', _efsFileSystem.fileSystemId
+        user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
+        user_data.replace('${REGION}', Aws.REGION);
+
         // Create EC2 instance inside default VPC
         const _ec2Instance = new ec2.Instance(this, 'sd-ec2-instance', {
             vpc: _defaultVpc,
@@ -104,15 +117,6 @@ export class EC2Stack extends NestedStack {
             // The userdata will not be executed for CDK update even the instance been terminated and re-create, try to delete the stack and re-deploy it
             // Also note user data scripts and cloud-init directives only run during the first boot cycle of an EC2 instance by default
             userData: ec2.UserData.custom(user_data),
-        });
-
-        // Create EFS file system
-        const _efsFileSystem = new efs.FileSystem(this, 'sd-efs', {
-            vpc: _defaultVpc,
-            lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
-            performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
-            throughputMode: efs.ThroughputMode.BURSTING,
-            removalPolicy: RemovalPolicy.DESTROY,
         });
 
         // Allow EC2 instance to connect to EFS file system

@@ -22,14 +22,20 @@ SECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '"SecretAccessKey" : "[^"]*' | g
 TMP_FOLDER=/tmp
 echo "$ACCESS_KEY_ID:$SECRET_ACCESS_KEY" > /tmp/.passwd-s3fs
 chmod 600 ${TMP_FOLDER}/.passwd-s3fs
+sudo chown ubuntu:ubuntu ${TMP_FOLDER}/.passwd-s3fs
 
-# execute in non root user
+# Fix the foler name to /tmp/s3-mount and /tmp/efs-mount
 sudo mkdir -p /tmp/s3-mount
 sudo chown ubuntu:ubuntu /tmp/s3-mount
 
-S3_BUCKET=${BUCKET_NAME}
-s3fs $S3_BUCKET /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log
-echo "S3 bucket $S3_BUCKET mounted at /tmp/s3-mount"
+sudo mkdir -p /tmp/efs-mount
+sudo chown ubuntu:ubuntu /tmp/efs-mount
+
+s3fs $BUCKET_NAME /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log
+echo "S3 bucket $BUCKET_NAME mounted at /tmp/s3-mount"
+
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${FS_ID}.efs.${REGION}.amazonaws.com:/ /tmp/efs-mount
+echo "EFS file system $FS_ID mounted at /tmp/efs-mount"
 
 # cd /home/ubuntu
 
