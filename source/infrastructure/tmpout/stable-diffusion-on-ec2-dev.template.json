@@ -1,0 +1,103 @@
+{
+ "Parameters": {
+  "ec2InstanceType": {
+   "Type": "String",
+   "Default": "g5.4xlarge",
+   "AllowedValues": [
+    "g5.2xlarge",
+    "g5.4xlarge"
+   ],
+   "Description": "EC2 instance type"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Resources": {
+  "ec2stackNestedStackec2stackNestedStackResourceE45AB0DC": {
+   "Type": "AWS::CloudFormation::Stack",
+   "Properties": {
+    "Parameters": {
+     "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef": {
+      "Ref": "ec2InstanceType"
+     }
+    },
+    "TemplateURL": {
+     "Fn::Join": [
+      "",
+      [
+       "https://s3.us-east-1.",
+       {
+        "Ref": "AWS::URLSuffix"
+       },
+       "/cdk-hnb659fds-assets-705247044519-us-east-1/e3acba01e4767e6be181b5e2feb2700dbd49ff25ec8a9d10de11941d04556e42.json"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack.NestedStack/ec2-stack.NestedStackResource",
+    "aws:asset:path": "stablediffusiononec2devec2stackCED0BE6A.nested.template.json",
+    "aws:asset:property": "TemplateURL"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2ISwqAIBBAz9JepxI6QQco6gRmE6ipoWMtoruHBK3eR0ArBDSVvBJXq+W7XuCeSSrL+s2PMkqHhLHEf4dMR6ZiE6aQo8KH+bAimFSfooEO2sokrXnMnrRDmD6+6m/yrmwAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ec2instanceid": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ec2stackNestedStackec2stackNestedStackResourceE45AB0DC",
+     "Outputs.stablediffusiononec2devec2stacksdec2instance8698FE00Ref"
+    ]
+   }
+  },
+  "albaddress": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ec2stackNestedStackec2stackNestedStackResourceE45AB0DC",
+     "Outputs.stablediffusiononec2devec2stackLBC8556CC2DNSName"
+    ]
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

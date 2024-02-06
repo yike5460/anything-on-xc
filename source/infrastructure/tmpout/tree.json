@@ -1,0 +1,1604 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "stable-diffusion-on-ec2-dev": {
+        "id": "stable-diffusion-on-ec2-dev",
+        "path": "stable-diffusion-on-ec2-dev",
+        "children": {
+          "ec2InstanceType": {
+            "id": "ec2InstanceType",
+            "path": "stable-diffusion-on-ec2-dev/ec2InstanceType",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.122.0"
+            }
+          },
+          "ec2-stack": {
+            "id": "ec2-stack",
+            "path": "stable-diffusion-on-ec2-dev/ec2-stack",
+            "children": {
+              "default-vpc": {
+                "id": "default-vpc",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc",
+                "children": {
+                  "PublicSubnet1": {
+                    "id": "PublicSubnet1",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc/PublicSubnet1",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet2": {
+                    "id": "PublicSubnet2",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc/PublicSubnet2",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet3": {
+                    "id": "PublicSubnet3",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc/PublicSubnet3",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet4": {
+                    "id": "PublicSubnet4",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc/PublicSubnet4",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet5": {
+                    "id": "PublicSubnet5",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc/PublicSubnet5",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet6": {
+                    "id": "PublicSubnet6",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default-vpc/PublicSubnet6",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.122.0"
+                }
+              },
+              "sd-models": {
+                "id": "sd-models",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-models",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-models/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                      "aws:cdk:cloudformation:props": {
+                        "publicAccessBlockConfiguration": {
+                          "blockPublicAcls": true,
+                          "blockPublicPolicy": true,
+                          "ignorePublicAcls": true,
+                          "restrictPublicBuckets": true
+                        },
+                        "tags": [
+                          {
+                            "key": "aws-cdk:cr-owned:96f1d4bb",
+                            "value": "true"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.Bucket",
+                  "version": "2.122.0"
+                }
+              },
+              "DeployModels": {
+                "id": "DeployModels",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels",
+                "children": {
+                  "AwsCliLayer": {
+                    "id": "AwsCliLayer",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/AwsCliLayer",
+                    "children": {
+                      "Code": {
+                        "id": "Code",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/AwsCliLayer/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/AwsCliLayer/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.122.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/AwsCliLayer/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.122.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/AwsCliLayer/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::LayerVersion",
+                          "aws:cdk:cloudformation:props": {
+                            "content": {
+                              "s3Bucket": "cdk-hnb659fds-assets-705247044519-us-east-1",
+                              "s3Key": "3322b7049fb0ed2b7cbb644a2ada8d1116ff80c32dca89e6ada846b5de26f961.zip"
+                            },
+                            "description": "/opt/awscli/aws"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnLayerVersion",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.lambda_layer_awscli.AwsCliLayer",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "CustomResourceHandler": {
+                    "id": "CustomResourceHandler",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/CustomResourceHandler",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.SingletonFunction",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "Asset1": {
+                    "id": "Asset1",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/Asset1",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/Asset1/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/Asset1/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "CustomResource": {
+                    "id": "CustomResource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/CustomResource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/CustomResource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_deployment.BucketDeployment",
+                  "version": "2.122.0"
+                }
+              },
+              "Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C": {
+                "id": "Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C",
+                "children": {
+                  "ServiceRole": {
+                    "id": "ServiceRole",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole",
+                    "children": {
+                      "ImportServiceRole": {
+                        "id": "ImportServiceRole",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/ImportServiceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "lambda.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "managedPolicyArns": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "DefaultPolicy": {
+                        "id": "DefaultPolicy",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "s3:GetObject*",
+                                        "s3:GetBucket*",
+                                        "s3:List*"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":s3:::cdk-hnb659fds-assets-705247044519-us-east-1"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":s3:::cdk-hnb659fds-assets-705247044519-us-east-1/*"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Action": [
+                                        "s3:GetObject*",
+                                        "s3:GetBucket*",
+                                        "s3:List*",
+                                        "s3:DeleteObject*",
+                                        "s3:PutObject",
+                                        "s3:PutObjectLegalHold",
+                                        "s3:PutObjectRetention",
+                                        "s3:PutObjectTagging",
+                                        "s3:PutObjectVersionTagging",
+                                        "s3:Abort*"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "sdmodels4ACC90E2",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "sdmodels4ACC90E2",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/*"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "policyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+                                "roles": [
+                                  {
+                                    "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                              "version": "2.122.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Policy",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "Code": {
+                    "id": "Code",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                      "aws:cdk:cloudformation:props": {
+                        "code": {
+                          "s3Bucket": "cdk-hnb659fds-assets-705247044519-us-east-1",
+                          "s3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip"
+                        },
+                        "environment": {
+                          "variables": {
+                            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+                          }
+                        },
+                        "handler": "index.handler",
+                        "layers": [
+                          {
+                            "Ref": "DeployModelsAwsCliLayer12D76F38"
+                          }
+                        ],
+                        "role": {
+                          "Fn::GetAtt": [
+                            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+                            "Arn"
+                          ]
+                        },
+                        "runtime": "python3.9",
+                        "timeout": 900
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.Function",
+                  "version": "2.122.0"
+                }
+              },
+              "default": {
+                "id": "default",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/default",
+                "children": {
+                  "PublicSubnet1": {
+                    "id": "PublicSubnet1",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default/PublicSubnet1",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet2": {
+                    "id": "PublicSubnet2",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default/PublicSubnet2",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet3": {
+                    "id": "PublicSubnet3",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default/PublicSubnet3",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet4": {
+                    "id": "PublicSubnet4",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default/PublicSubnet4",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet5": {
+                    "id": "PublicSubnet5",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default/PublicSubnet5",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "PublicSubnet6": {
+                    "id": "PublicSubnet6",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/default/PublicSubnet6",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.122.0"
+                }
+              },
+              "sd-ec2-sg": {
+                "id": "sd-ec2-sg",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "groupDescription": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg",
+                        "securityGroupEgress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "description": "Allow all outbound traffic by default",
+                            "ipProtocol": "-1"
+                          }
+                        ],
+                        "securityGroupIngress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "ipProtocol": "tcp",
+                            "fromPort": 22,
+                            "toPort": 22,
+                            "description": "allow ssh access from anywhere"
+                          },
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "ipProtocol": "tcp",
+                            "fromPort": 7860,
+                            "toPort": 7860,
+                            "description": "allow webui access from anywhere"
+                          }
+                        ],
+                        "vpcId": "vpc-4eb2f634"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "from stablediffusiononec2devec2stackLBSecurityGroup769748DD:7860": {
+                    "id": "from stablediffusiononec2devec2stackLBSecurityGroup769748DD:7860",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg/from stablediffusiononec2devec2stackLBSecurityGroup769748DD:7860",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
+                      "aws:cdk:cloudformation:props": {
+                        "description": "Load balancer to target",
+                        "fromPort": 7860,
+                        "groupId": {
+                          "Fn::GetAtt": [
+                            "sdec2sg385A194D",
+                            "GroupId"
+                          ]
+                        },
+                        "ipProtocol": "tcp",
+                        "sourceSecurityGroupId": {
+                          "Fn::GetAtt": [
+                            "LBSecurityGroup8A41EA2B",
+                            "GroupId"
+                          ]
+                        },
+                        "toPort": 7860
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroupIngress",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                  "version": "2.122.0"
+                }
+              },
+              "sd-ec2-role": {
+                "id": "sd-ec2-role",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role",
+                "children": {
+                  "Importsd-ec2-role": {
+                    "id": "Importsd-ec2-role",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role/Importsd-ec2-role",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/AmazonSSMFullAccess"
+                              ]
+                            ]
+                          }
+                        ],
+                        "roleName": "sd-ec2-role"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:*",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "sdmodels4ACC90E2",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "sdmodels4ACC90E2",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "sdec2roleDefaultPolicy0283D784",
+                            "roles": [
+                              {
+                                "Ref": "sdec2role2CE5C3A8"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.122.0"
+                }
+              },
+              "sd-efs": {
+                "id": "sd-efs",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::FileSystem",
+                      "aws:cdk:cloudformation:props": {
+                        "encrypted": true,
+                        "lifecyclePolicies": [
+                          {
+                            "transitionToIa": "AFTER_14_DAYS"
+                          }
+                        ],
+                        "performanceMode": "generalPurpose",
+                        "fileSystemTags": [
+                          {
+                            "key": "Name",
+                            "value": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs"
+                          }
+                        ],
+                        "throughputMode": "bursting"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnFileSystem",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsSecurityGroup": {
+                    "id": "EfsSecurityGroup",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:props": {
+                            "groupDescription": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup",
+                            "securityGroupEgress": [
+                              {
+                                "cidrIp": "0.0.0.0/0",
+                                "description": "Allow all outbound traffic by default",
+                                "ipProtocol": "-1"
+                              }
+                            ],
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs"
+                              }
+                            ],
+                            "vpcId": "vpc-4eb2f634"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "from stablediffusiononec2devec2stacksdec2sgB5AE8968:2049": {
+                        "id": "from stablediffusiononec2devec2stacksdec2sgB5AE8968:2049",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup/from stablediffusiononec2devec2stacksdec2sgB5AE8968:2049",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
+                          "aws:cdk:cloudformation:props": {
+                            "description": "from stablediffusiononec2devec2stacksdec2sgB5AE8968:2049",
+                            "fromPort": 2049,
+                            "groupId": {
+                              "Fn::GetAtt": [
+                                "sdefsEfsSecurityGroupCDDD63E6",
+                                "GroupId"
+                              ]
+                            },
+                            "ipProtocol": "tcp",
+                            "sourceSecurityGroupId": {
+                              "Fn::GetAtt": [
+                                "sdec2sg385A194D",
+                                "GroupId"
+                              ]
+                            },
+                            "toPort": 2049
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroupIngress",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsMountTarget1": {
+                    "id": "EfsMountTarget1",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget1",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::MountTarget",
+                      "aws:cdk:cloudformation:props": {
+                        "fileSystemId": {
+                          "Ref": "sdefs7FCF5A23"
+                        },
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdefsEfsSecurityGroupCDDD63E6",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-83d4fce4"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnMountTarget",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsMountTarget2": {
+                    "id": "EfsMountTarget2",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget2",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::MountTarget",
+                      "aws:cdk:cloudformation:props": {
+                        "fileSystemId": {
+                          "Ref": "sdefs7FCF5A23"
+                        },
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdefsEfsSecurityGroupCDDD63E6",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-25487e0b"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnMountTarget",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsMountTarget3": {
+                    "id": "EfsMountTarget3",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget3",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::MountTarget",
+                      "aws:cdk:cloudformation:props": {
+                        "fileSystemId": {
+                          "Ref": "sdefs7FCF5A23"
+                        },
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdefsEfsSecurityGroupCDDD63E6",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-ad9368e0"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnMountTarget",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsMountTarget4": {
+                    "id": "EfsMountTarget4",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget4",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::MountTarget",
+                      "aws:cdk:cloudformation:props": {
+                        "fileSystemId": {
+                          "Ref": "sdefs7FCF5A23"
+                        },
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdefsEfsSecurityGroupCDDD63E6",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-704d792c"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnMountTarget",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsMountTarget5": {
+                    "id": "EfsMountTarget5",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget5",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::MountTarget",
+                      "aws:cdk:cloudformation:props": {
+                        "fileSystemId": {
+                          "Ref": "sdefs7FCF5A23"
+                        },
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdefsEfsSecurityGroupCDDD63E6",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-906a15ae"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnMountTarget",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "EfsMountTarget6": {
+                    "id": "EfsMountTarget6",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget6",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EFS::MountTarget",
+                      "aws:cdk:cloudformation:props": {
+                        "fileSystemId": {
+                          "Ref": "sdefs7FCF5A23"
+                        },
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdefsEfsSecurityGroupCDDD63E6",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-e4a34eea"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_efs.CfnMountTarget",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_efs.FileSystem",
+                  "version": "2.122.0"
+                }
+              },
+              "KeyPair": {
+                "id": "KeyPair",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/KeyPair",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.122.0"
+                }
+              },
+              "sd-ec2-instance": {
+                "id": "sd-ec2-instance",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance",
+                "children": {
+                  "InstanceProfile": {
+                    "id": "InstanceProfile",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance/InstanceProfile",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::InstanceProfile",
+                      "aws:cdk:cloudformation:props": {
+                        "roles": [
+                          {
+                            "Ref": "sdec2role2CE5C3A8"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnInstanceProfile",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Instance",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-east-1a",
+                        "blockDeviceMappings": [
+                          {
+                            "deviceName": "/dev/sda1",
+                            "ebs": {
+                              "volumeSize": 300
+                            }
+                          }
+                        ],
+                        "iamInstanceProfile": {
+                          "Ref": "sdec2instanceInstanceProfile0B509707"
+                        },
+                        "imageId": "ami-0da2ab58cace8997d",
+                        "instanceType": {
+                          "Ref": "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef"
+                        },
+                        "keyName": "us-east-1",
+                        "securityGroupIds": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdec2sg385A194D",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnetId": "subnet-83d4fce4",
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance"
+                          }
+                        ],
+                        "userData": {
+                          "Fn::Base64": {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "#!/bin/bash -xe\necho \"Starting user_data.sh and installing dependencies\"\n\n# set -euxo pipefail\n# remove u option since we need the string replacement to work in the following line\nset -exo pipefail\n\nsudo apt-get update\nsudo apt install software-properties-common -y\nsudo add-apt-repository ppa:deadsnakes/ppa -y\nsudo apt install wget git python3.10 python3.10-venv build-essential net-tools libgl1 libtcmalloc-minimal4 -y\nsudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.10 1\n\n# install s3 fuse\nsudo apt install s3fs -y\n# Fetch the credentials from the instance metadata service\nCREDENTIALS=$(curl http://169.254.169.254/latest/meta-data/iam/security-credentials/sd-ec2-role)\n\n# Parse the AccessKeyId and SecretAccessKey from the JSON\nACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '\"AccessKeyId\" : \"[^\"]*' | grep -o '[^\"]*$')\nSECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '\"SecretAccessKey\" : \"[^\"]*' | grep -o '[^\"]*$')\n\n# Store them in the .passwd-s3fs file\nTMP_FOLDER=/tmp\necho \"$ACCESS_KEY_ID:$SECRET_ACCESS_KEY\" > /tmp/.passwd-s3fs\nchmod 600 ${TMP_FOLDER}/.passwd-s3fs\nsudo chown ubuntu:ubuntu ${TMP_FOLDER}/.passwd-s3fs\n\n# Fix the foler name to /tmp/s3-mount and /tmp/efs-mount\nsudo mkdir -p /tmp/s3-mount\nsudo chown ubuntu:ubuntu /tmp/s3-mount\n\nsudo mkdir -p /tmp/efs-mount\nsudo chown ubuntu:ubuntu /tmp/efs-mount\n\n# var of the bucket name\nBUCKET_NAME=\"placeholder\"\nFS_ID=\"placeholder\"\nREGION=\"placeholder\"\n\ns3fs ",
+                                {
+                                  "Ref": "sdmodels4ACC90E2"
+                                },
+                                " /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log\necho \"S3 bucket ${BUCKET_NAME} mounted at /tmp/s3-mount\"\n\nsudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${FS_ID}.efs.${REGION}.amazonaws.com:/ /tmp/efs-mount\necho \"EFS file system ${FS_ID} mounted at /tmp/efs-mount\"\n\n# cd /home/ubuntu\n\n# curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash\n\n# cd stable-diffusion-webui/extensions/stable-diffusion-aws-extension\n# git checkout main\n# cd ../../\n\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/sd_xl_base_1.0.safetensors\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors\n\n# sudo chown -R ubuntu:ubuntu /home/ubuntu/stable-diffusion-webui\n\n# cat > sd-webui.service <<EOF\n# [Unit]\n# Description=Stable Diffusion UI server\n# After=network.target\n# StartLimitIntervalSec=0\n\n# [Service]\n# WorkingDirectory=/home/ubuntu/stable-diffusion-webui\n# ExecStart=/home/ubuntu/stable-diffusion-webui/webui.sh --enable-insecure-extension-access --skip-torch-cuda-test --no-half --listen\n# Type=simple\n# Restart=always\n# RestartSec=3\n# User=ubuntu\n# StartLimitAction=reboot\n\n# [Install]\n# WantedBy=default.target\n\n# EOF\n# sudo mv sd-webui.service /etc/systemd/system\n# sudo chown root:root /etc/systemd/system/sd-webui.service\n\n# sudo systemctl enable sd-webui.service\n# sudo systemctl start sd-webui.service"
+                              ]
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnInstance",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.Instance",
+                  "version": "2.122.0"
+                }
+              },
+              "LB": {
+                "id": "LB",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+                      "aws:cdk:cloudformation:props": {
+                        "loadBalancerAttributes": [
+                          {
+                            "key": "deletion_protection.enabled",
+                            "value": "false"
+                          }
+                        ],
+                        "scheme": "internet-facing",
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "LBSecurityGroup8A41EA2B",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnets": [
+                          "subnet-83d4fce4",
+                          "subnet-25487e0b",
+                          "subnet-ad9368e0",
+                          "subnet-704d792c",
+                          "subnet-906a15ae",
+                          "subnet-e4a34eea"
+                        ],
+                        "type": "application"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnLoadBalancer",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "SecurityGroup": {
+                    "id": "SecurityGroup",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/SecurityGroup",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/SecurityGroup/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:props": {
+                            "groupDescription": "Automatically created Security Group for ELB stablediffusiononec2devec2stackLBE825B60D",
+                            "securityGroupIngress": [
+                              {
+                                "cidrIp": "0.0.0.0/0",
+                                "ipProtocol": "tcp",
+                                "fromPort": 7860,
+                                "toPort": 7860,
+                                "description": "Allow from anyone on port 7860"
+                              }
+                            ],
+                            "vpcId": "vpc-4eb2f634"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "to stablediffusiononec2devec2stacksdec2sgB5AE8968:7860": {
+                        "id": "to stablediffusiononec2devec2stacksdec2sgB5AE8968:7860",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/SecurityGroup/to stablediffusiononec2devec2stacksdec2sgB5AE8968:7860",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupEgress",
+                          "aws:cdk:cloudformation:props": {
+                            "description": "Load balancer to target",
+                            "destinationSecurityGroupId": {
+                              "Fn::GetAtt": [
+                                "sdec2sg385A194D",
+                                "GroupId"
+                              ]
+                            },
+                            "fromPort": 7860,
+                            "groupId": {
+                              "Fn::GetAtt": [
+                                "LBSecurityGroup8A41EA2B",
+                                "GroupId"
+                              ]
+                            },
+                            "ipProtocol": "tcp",
+                            "toPort": 7860
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroupEgress",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "WebUI": {
+                    "id": "WebUI",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/WebUI",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/WebUI/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::Listener",
+                          "aws:cdk:cloudformation:props": {
+                            "defaultActions": [
+                              {
+                                "type": "forward",
+                                "targetGroupArn": {
+                                  "Ref": "LBWebUITargetGroup95B77B10"
+                                }
+                              }
+                            ],
+                            "loadBalancerArn": {
+                              "Ref": "LB8A12904C"
+                            },
+                            "port": 7860,
+                            "protocol": "HTTP"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnListener",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "TargetGroup": {
+                        "id": "TargetGroup",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/WebUI/TargetGroup",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/WebUI/TargetGroup/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+                              "aws:cdk:cloudformation:props": {
+                                "port": 7860,
+                                "protocol": "HTTP",
+                                "targetGroupAttributes": [
+                                  {
+                                    "key": "stickiness.enabled",
+                                    "value": "false"
+                                  }
+                                ],
+                                "targetType": "instance",
+                                "vpcId": "vpc-4eb2f634"
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.CfnTargetGroup",
+                              "version": "2.122.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationTargetGroup",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationListener",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ApplicationLoadBalancer",
+                  "version": "2.122.0"
+                }
+              },
+              "ASG": {
+                "id": "ASG",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG",
+                "children": {
+                  "InstanceRole": {
+                    "id": "InstanceRole",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/InstanceRole",
+                    "children": {
+                      "ImportInstanceRole": {
+                        "id": "ImportInstanceRole",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/InstanceRole/ImportInstanceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.122.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/InstanceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ec2.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "stable-diffusion-on-ec2-dev/ec2-stack/ASG"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "InstanceProfile": {
+                    "id": "InstanceProfile",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/InstanceProfile",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::InstanceProfile",
+                      "aws:cdk:cloudformation:props": {
+                        "roles": [
+                          {
+                            "Ref": "ASGInstanceRoleE263A41B"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnInstanceProfile",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "LaunchConfig": {
+                    "id": "LaunchConfig",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/LaunchConfig",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::AutoScaling::LaunchConfiguration",
+                      "aws:cdk:cloudformation:props": {
+                        "blockDeviceMappings": [
+                          {
+                            "deviceName": "/dev/sda1",
+                            "ebs": {
+                              "volumeSize": 300
+                            }
+                          }
+                        ],
+                        "iamInstanceProfile": {
+                          "Ref": "ASGInstanceProfile0A2834D7"
+                        },
+                        "imageId": "ami-0da2ab58cace8997d",
+                        "instanceType": {
+                          "Ref": "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef"
+                        },
+                        "keyName": "us-east-1",
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "sdec2sg385A194D",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "userData": {
+                          "Fn::Base64": {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "#!/bin/bash -xe\necho \"Starting user_data.sh and installing dependencies\"\n\n# set -euxo pipefail\n# remove u option since we need the string replacement to work in the following line\nset -exo pipefail\n\nsudo apt-get update\nsudo apt install software-properties-common -y\nsudo add-apt-repository ppa:deadsnakes/ppa -y\nsudo apt install wget git python3.10 python3.10-venv build-essential net-tools libgl1 libtcmalloc-minimal4 -y\nsudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.10 1\n\n# install s3 fuse\nsudo apt install s3fs -y\n# Fetch the credentials from the instance metadata service\nCREDENTIALS=$(curl http://169.254.169.254/latest/meta-data/iam/security-credentials/sd-ec2-role)\n\n# Parse the AccessKeyId and SecretAccessKey from the JSON\nACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '\"AccessKeyId\" : \"[^\"]*' | grep -o '[^\"]*$')\nSECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '\"SecretAccessKey\" : \"[^\"]*' | grep -o '[^\"]*$')\n\n# Store them in the .passwd-s3fs file\nTMP_FOLDER=/tmp\necho \"$ACCESS_KEY_ID:$SECRET_ACCESS_KEY\" > /tmp/.passwd-s3fs\nchmod 600 ${TMP_FOLDER}/.passwd-s3fs\nsudo chown ubuntu:ubuntu ${TMP_FOLDER}/.passwd-s3fs\n\n# Fix the foler name to /tmp/s3-mount and /tmp/efs-mount\nsudo mkdir -p /tmp/s3-mount\nsudo chown ubuntu:ubuntu /tmp/s3-mount\n\nsudo mkdir -p /tmp/efs-mount\nsudo chown ubuntu:ubuntu /tmp/efs-mount\n\n# var of the bucket name\nBUCKET_NAME=\"placeholder\"\nFS_ID=\"placeholder\"\nREGION=\"placeholder\"\n\ns3fs ",
+                                {
+                                  "Ref": "sdmodels4ACC90E2"
+                                },
+                                " /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log\necho \"S3 bucket ${BUCKET_NAME} mounted at /tmp/s3-mount\"\n\nsudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${FS_ID}.efs.${REGION}.amazonaws.com:/ /tmp/efs-mount\necho \"EFS file system ${FS_ID} mounted at /tmp/efs-mount\"\n\n# cd /home/ubuntu\n\n# curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash\n\n# cd stable-diffusion-webui/extensions/stable-diffusion-aws-extension\n# git checkout main\n# cd ../../\n\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/sd_xl_base_1.0.safetensors\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors\n\n# sudo chown -R ubuntu:ubuntu /home/ubuntu/stable-diffusion-webui\n\n# cat > sd-webui.service <<EOF\n# [Unit]\n# Description=Stable Diffusion UI server\n# After=network.target\n# StartLimitIntervalSec=0\n\n# [Service]\n# WorkingDirectory=/home/ubuntu/stable-diffusion-webui\n# ExecStart=/home/ubuntu/stable-diffusion-webui/webui.sh --enable-insecure-extension-access --skip-torch-cuda-test --no-half --listen\n# Type=simple\n# Restart=always\n# RestartSec=3\n# User=ubuntu\n# StartLimitAction=reboot\n\n# [Install]\n# WantedBy=default.target\n\n# EOF\n# sudo mv sd-webui.service /etc/systemd/system\n# sudo chown root:root /etc/systemd/system/sd-webui.service\n\n# sudo systemctl enable sd-webui.service\n# sudo systemctl start sd-webui.service"
+                              ]
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_autoscaling.CfnLaunchConfiguration",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "ASG": {
+                    "id": "ASG",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/ASG",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::AutoScaling::AutoScalingGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "launchConfigurationName": {
+                          "Ref": "ASGLaunchConfigC00AF12B"
+                        },
+                        "maxSize": "1",
+                        "minSize": "1",
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "stable-diffusion-on-ec2-dev/ec2-stack/ASG",
+                            "propagateAtLaunch": true
+                          }
+                        ],
+                        "targetGroupArns": [
+                          {
+                            "Ref": "LBWebUITargetGroup95B77B10"
+                          }
+                        ],
+                        "vpcZoneIdentifier": [
+                          "subnet-83d4fce4",
+                          "subnet-25487e0b",
+                          "subnet-ad9368e0",
+                          "subnet-704d792c",
+                          "subnet-906a15ae",
+                          "subnet-e4a34eea"
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_autoscaling.CfnAutoScalingGroup",
+                      "version": "2.122.0"
+                    }
+                  },
+                  "ScalingPolicyCpuScaling": {
+                    "id": "ScalingPolicyCpuScaling",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/ScalingPolicyCpuScaling",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/ScalingPolicyCpuScaling/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::AutoScaling::ScalingPolicy",
+                          "aws:cdk:cloudformation:props": {
+                            "autoScalingGroupName": {
+                              "Ref": "ASG46ED3070"
+                            },
+                            "policyType": "TargetTrackingScaling",
+                            "targetTrackingConfiguration": {
+                              "predefinedMetricSpecification": {
+                                "predefinedMetricType": "ASGAverageCPUUtilization"
+                              },
+                              "targetValue": 60
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_autoscaling.CfnScalingPolicy",
+                          "version": "2.122.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_autoscaling.TargetTrackingScalingPolicy",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_autoscaling.AutoScalingGroup",
+                  "version": "2.122.0"
+                }
+              },
+              "CDKMetadata": {
+                "id": "CDKMetadata",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/CDKMetadata",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "stable-diffusion-on-ec2-dev/ec2-stack/CDKMetadata/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.122.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.3.0"
+                }
+              },
+              "reference-to-stablediffusiononec2devec2InstanceTypeCB5BC35BRef": {
+                "id": "reference-to-stablediffusiononec2devec2InstanceTypeCB5BC35BRef",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/reference-to-stablediffusiononec2devec2InstanceTypeCB5BC35BRef",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnParameter",
+                  "version": "2.122.0"
+                }
+              },
+              "stablediffusiononec2devec2stacksdec2instance8698FE00Ref": {
+                "id": "stablediffusiononec2devec2stacksdec2instance8698FE00Ref",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/stablediffusiononec2devec2stacksdec2instance8698FE00Ref",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.122.0"
+                }
+              },
+              "stablediffusiononec2devec2stackLBC8556CC2DNSName": {
+                "id": "stablediffusiononec2devec2stackLBC8556CC2DNSName",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack/stablediffusiononec2devec2stackLBC8556CC2DNSName",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.122.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.NestedStack",
+              "version": "2.122.0"
+            }
+          },
+          "ec2-stack.NestedStack": {
+            "id": "ec2-stack.NestedStack",
+            "path": "stable-diffusion-on-ec2-dev/ec2-stack.NestedStack",
+            "children": {
+              "ec2-stack.NestedStackResource": {
+                "id": "ec2-stack.NestedStackResource",
+                "path": "stable-diffusion-on-ec2-dev/ec2-stack.NestedStack/ec2-stack.NestedStackResource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudFormation::Stack",
+                  "aws:cdk:cloudformation:props": {
+                    "parameters": {
+                      "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef": {
+                        "Ref": "ec2InstanceType"
+                      }
+                    },
+                    "templateUrl": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "https://s3.us-east-1.",
+                          {
+                            "Ref": "AWS::URLSuffix"
+                          },
+                          "/cdk-hnb659fds-assets-705247044519-us-east-1/e3acba01e4767e6be181b5e2feb2700dbd49ff25ec8a9d10de11941d04556e42.json"
+                        ]
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnStack",
+                  "version": "2.122.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "ec2-instance-id": {
+            "id": "ec2-instance-id",
+            "path": "stable-diffusion-on-ec2-dev/ec2-instance-id",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.122.0"
+            }
+          },
+          "alb-address": {
+            "id": "alb-address",
+            "path": "stable-diffusion-on-ec2-dev/alb-address",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.122.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "stable-diffusion-on-ec2-dev/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "stable-diffusion-on-ec2-dev/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.122.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "stable-diffusion-on-ec2-dev/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.122.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "stable-diffusion-on-ec2-dev/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.122.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.122.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.3.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.122.0"
+    }
+  }
+}

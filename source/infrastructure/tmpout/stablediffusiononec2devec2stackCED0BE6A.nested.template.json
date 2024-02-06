@@ -1,0 +1,916 @@
+{
+ "Resources": {
+  "sdmodels4ACC90E2": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:cr-owned:96f1d4bb",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-models/Resource"
+   }
+  },
+  "DeployModelsAwsCliLayer12D76F38": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": "cdk-hnb659fds-assets-705247044519-us-east-1",
+     "S3Key": "3322b7049fb0ed2b7cbb644a2ada8d1116ff80c32dca89e6ada846b5de26f961.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/AwsCliLayer/Resource",
+    "aws:asset:path": "asset.3322b7049fb0ed2b7cbb644a2ada8d1116ff80c32dca89e6ada846b5de26f961.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "DeployModelsCustomResource1D428A6B": {
+   "Type": "Custom::CDKBucketDeployment",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+      "Arn"
+     ]
+    },
+    "SourceBucketNames": [
+     "cdk-hnb659fds-assets-705247044519-us-east-1"
+    ],
+    "SourceObjectKeys": [
+     "af92863e56d8a22b5ab8715ded0904425095334220099d8e05a2ee79c23345ed.zip"
+    ],
+    "DestinationBucketName": {
+     "Ref": "sdmodels4ACC90E2"
+    },
+    "Prune": true
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/DeployModels/CustomResource/Default"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::cdk-hnb659fds-assets-705247044519-us-east-1"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::cdk-hnb659fds-assets-705247044519-us-east-1/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "sdmodels4ACC90E2",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "sdmodels4ACC90E2",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "Roles": [
+     {
+      "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-705247044519-us-east-1",
+     "S3Key": "e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+     }
+    },
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "DeployModelsAwsCliLayer12D76F38"
+     }
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.9",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+    "aws:asset:path": "asset.e976a796f036a5efbf44b99e44cfb5a961df08d8dbf7cd37e60bf216fb982a00",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "sdec2sg385A194D": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "allow ssh access from anywhere",
+      "FromPort": 22,
+      "IpProtocol": "tcp",
+      "ToPort": 22
+     },
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "allow webui access from anywhere",
+      "FromPort": 7860,
+      "IpProtocol": "tcp",
+      "ToPort": 7860
+     }
+    ],
+    "VpcId": "vpc-4eb2f634"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg/Resource"
+   }
+  },
+  "sdec2sgfromstablediffusiononec2devec2stackLBSecurityGroup769748DD7860594BD602": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "FromPort": 7860,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "sdec2sg385A194D",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "LBSecurityGroup8A41EA2B",
+      "GroupId"
+     ]
+    },
+    "ToPort": 7860
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-sg/from stablediffusiononec2devec2stackLBSecurityGroup769748DD:7860"
+   }
+  },
+  "sdec2role2CE5C3A8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMFullAccess"
+       ]
+      ]
+     }
+    ],
+    "RoleName": "sd-ec2-role"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role/Resource"
+   }
+  },
+  "sdec2roleDefaultPolicy0283D784": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "sdmodels4ACC90E2",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "sdmodels4ACC90E2",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "sdec2roleDefaultPolicy0283D784",
+    "Roles": [
+     {
+      "Ref": "sdec2role2CE5C3A8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-role/DefaultPolicy/Resource"
+   }
+  },
+  "sdefs7FCF5A23": {
+   "Type": "AWS::EFS::FileSystem",
+   "Properties": {
+    "Encrypted": true,
+    "FileSystemTags": [
+     {
+      "Key": "Name",
+      "Value": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs"
+     }
+    ],
+    "LifecyclePolicies": [
+     {
+      "TransitionToIA": "AFTER_14_DAYS"
+     }
+    ],
+    "PerformanceMode": "generalPurpose",
+    "ThroughputMode": "bursting"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/Resource"
+   }
+  },
+  "sdefsEfsSecurityGroupCDDD63E6": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs"
+     }
+    ],
+    "VpcId": "vpc-4eb2f634"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup/Resource"
+   }
+  },
+  "sdefsEfsSecurityGroupfromstablediffusiononec2devec2stacksdec2sgB5AE896820496E9203B8": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "from stablediffusiononec2devec2stacksdec2sgB5AE8968:2049",
+    "FromPort": 2049,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "sdefsEfsSecurityGroupCDDD63E6",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "sdec2sg385A194D",
+      "GroupId"
+     ]
+    },
+    "ToPort": 2049
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsSecurityGroup/from stablediffusiononec2devec2stacksdec2sgB5AE8968:2049"
+   }
+  },
+  "sdefsEfsMountTarget1D5AF9B94": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "sdefs7FCF5A23"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdefsEfsSecurityGroupCDDD63E6",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-83d4fce4"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget1"
+   }
+  },
+  "sdefsEfsMountTarget20DB4A6C7": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "sdefs7FCF5A23"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdefsEfsSecurityGroupCDDD63E6",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-25487e0b"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget2"
+   }
+  },
+  "sdefsEfsMountTarget38D60AB5C": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "sdefs7FCF5A23"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdefsEfsSecurityGroupCDDD63E6",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-ad9368e0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget3"
+   }
+  },
+  "sdefsEfsMountTarget4B4A91ACA": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "sdefs7FCF5A23"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdefsEfsSecurityGroupCDDD63E6",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-704d792c"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget4"
+   }
+  },
+  "sdefsEfsMountTarget5B7E9A92B": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "sdefs7FCF5A23"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdefsEfsSecurityGroupCDDD63E6",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-906a15ae"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget5"
+   }
+  },
+  "sdefsEfsMountTarget6CE3D7E33": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "sdefs7FCF5A23"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdefsEfsSecurityGroupCDDD63E6",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-e4a34eea"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-efs/EfsMountTarget6"
+   }
+  },
+  "sdec2instanceInstanceProfile0B509707": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "sdec2role2CE5C3A8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance/InstanceProfile"
+   }
+  },
+  "sdec2instance50E90E64": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "BlockDeviceMappings": [
+     {
+      "DeviceName": "/dev/sda1",
+      "Ebs": {
+       "VolumeSize": 300
+      }
+     }
+    ],
+    "IamInstanceProfile": {
+     "Ref": "sdec2instanceInstanceProfile0B509707"
+    },
+    "ImageId": "ami-0da2ab58cace8997d",
+    "InstanceType": {
+     "Ref": "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef"
+    },
+    "KeyName": "us-east-1",
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "sdec2sg385A194D",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": "subnet-83d4fce4",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": {
+      "Fn::Join": [
+       "",
+       [
+        "#!/bin/bash -xe\necho \"Starting user_data.sh and installing dependencies\"\n\n# set -euxo pipefail\n# remove u option since we need the string replacement to work in the following line\nset -exo pipefail\n\nsudo apt-get update\nsudo apt install software-properties-common -y\nsudo add-apt-repository ppa:deadsnakes/ppa -y\nsudo apt install wget git python3.10 python3.10-venv build-essential net-tools libgl1 libtcmalloc-minimal4 -y\nsudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.10 1\n\n# install s3 fuse\nsudo apt install s3fs -y\n# Fetch the credentials from the instance metadata service\nCREDENTIALS=$(curl http://169.254.169.254/latest/meta-data/iam/security-credentials/sd-ec2-role)\n\n# Parse the AccessKeyId and SecretAccessKey from the JSON\nACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '\"AccessKeyId\" : \"[^\"]*' | grep -o '[^\"]*$')\nSECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '\"SecretAccessKey\" : \"[^\"]*' | grep -o '[^\"]*$')\n\n# Store them in the .passwd-s3fs file\nTMP_FOLDER=/tmp\necho \"$ACCESS_KEY_ID:$SECRET_ACCESS_KEY\" > /tmp/.passwd-s3fs\nchmod 600 ${TMP_FOLDER}/.passwd-s3fs\nsudo chown ubuntu:ubuntu ${TMP_FOLDER}/.passwd-s3fs\n\n# Fix the foler name to /tmp/s3-mount and /tmp/efs-mount\nsudo mkdir -p /tmp/s3-mount\nsudo chown ubuntu:ubuntu /tmp/s3-mount\n\nsudo mkdir -p /tmp/efs-mount\nsudo chown ubuntu:ubuntu /tmp/efs-mount\n\n# var of the bucket name\nBUCKET_NAME=\"placeholder\"\nFS_ID=\"placeholder\"\nREGION=\"placeholder\"\n\ns3fs ",
+        {
+         "Ref": "sdmodels4ACC90E2"
+        },
+        " /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log\necho \"S3 bucket ${BUCKET_NAME} mounted at /tmp/s3-mount\"\n\nsudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${FS_ID}.efs.${REGION}.amazonaws.com:/ /tmp/efs-mount\necho \"EFS file system ${FS_ID} mounted at /tmp/efs-mount\"\n\n# cd /home/ubuntu\n\n# curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash\n\n# cd stable-diffusion-webui/extensions/stable-diffusion-aws-extension\n# git checkout main\n# cd ../../\n\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/sd_xl_base_1.0.safetensors\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors\n\n# sudo chown -R ubuntu:ubuntu /home/ubuntu/stable-diffusion-webui\n\n# cat > sd-webui.service <<EOF\n# [Unit]\n# Description=Stable Diffusion UI server\n# After=network.target\n# StartLimitIntervalSec=0\n\n# [Service]\n# WorkingDirectory=/home/ubuntu/stable-diffusion-webui\n# ExecStart=/home/ubuntu/stable-diffusion-webui/webui.sh --enable-insecure-extension-access --skip-torch-cuda-test --no-half --listen\n# Type=simple\n# Restart=always\n# RestartSec=3\n# User=ubuntu\n# StartLimitAction=reboot\n\n# [Install]\n# WantedBy=default.target\n\n# EOF\n# sudo mv sd-webui.service /etc/systemd/system\n# sudo chown root:root /etc/systemd/system/sd-webui.service\n\n# sudo systemctl enable sd-webui.service\n# sudo systemctl start sd-webui.service"
+       ]
+      ]
+     }
+    }
+   },
+   "DependsOn": [
+    "sdec2roleDefaultPolicy0283D784",
+    "sdec2role2CE5C3A8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/sd-ec2-instance/Resource"
+   }
+  },
+  "LB8A12904C": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "false"
+     }
+    ],
+    "Scheme": "internet-facing",
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "LBSecurityGroup8A41EA2B",
+       "GroupId"
+      ]
+     }
+    ],
+    "Subnets": [
+     "subnet-83d4fce4",
+     "subnet-25487e0b",
+     "subnet-ad9368e0",
+     "subnet-704d792c",
+     "subnet-906a15ae",
+     "subnet-e4a34eea"
+    ],
+    "Type": "application"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/Resource"
+   }
+  },
+  "LBSecurityGroup8A41EA2B": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatically created Security Group for ELB stablediffusiononec2devec2stackLBE825B60D",
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow from anyone on port 7860",
+      "FromPort": 7860,
+      "IpProtocol": "tcp",
+      "ToPort": 7860
+     }
+    ],
+    "VpcId": "vpc-4eb2f634"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/SecurityGroup/Resource"
+   }
+  },
+  "LBSecurityGrouptostablediffusiononec2devec2stacksdec2sgB5AE8968786056D40E84": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "sdec2sg385A194D",
+      "GroupId"
+     ]
+    },
+    "FromPort": 7860,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "LBSecurityGroup8A41EA2B",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 7860
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/SecurityGroup/to stablediffusiononec2devec2stacksdec2sgB5AE8968:7860"
+   }
+  },
+  "LBWebUI892878DF": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "LBWebUITargetGroup95B77B10"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "LB8A12904C"
+    },
+    "Port": 7860,
+    "Protocol": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/WebUI/Resource"
+   }
+  },
+  "LBWebUITargetGroup95B77B10": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "Port": 7860,
+    "Protocol": "HTTP",
+    "TargetGroupAttributes": [
+     {
+      "Key": "stickiness.enabled",
+      "Value": "false"
+     }
+    ],
+    "TargetType": "instance",
+    "VpcId": "vpc-4eb2f634"
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/LB/WebUI/TargetGroup/Resource"
+   }
+  },
+  "ASGInstanceRoleE263A41B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "stable-diffusion-on-ec2-dev/ec2-stack/ASG"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/InstanceRole/Resource"
+   }
+  },
+  "ASGInstanceProfile0A2834D7": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "ASGInstanceRoleE263A41B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/InstanceProfile"
+   }
+  },
+  "ASGLaunchConfigC00AF12B": {
+   "Type": "AWS::AutoScaling::LaunchConfiguration",
+   "Properties": {
+    "BlockDeviceMappings": [
+     {
+      "DeviceName": "/dev/sda1",
+      "Ebs": {
+       "VolumeSize": 300
+      }
+     }
+    ],
+    "IamInstanceProfile": {
+     "Ref": "ASGInstanceProfile0A2834D7"
+    },
+    "ImageId": "ami-0da2ab58cace8997d",
+    "InstanceType": {
+     "Ref": "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef"
+    },
+    "KeyName": "us-east-1",
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "sdec2sg385A194D",
+       "GroupId"
+      ]
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": {
+      "Fn::Join": [
+       "",
+       [
+        "#!/bin/bash -xe\necho \"Starting user_data.sh and installing dependencies\"\n\n# set -euxo pipefail\n# remove u option since we need the string replacement to work in the following line\nset -exo pipefail\n\nsudo apt-get update\nsudo apt install software-properties-common -y\nsudo add-apt-repository ppa:deadsnakes/ppa -y\nsudo apt install wget git python3.10 python3.10-venv build-essential net-tools libgl1 libtcmalloc-minimal4 -y\nsudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.10 1\n\n# install s3 fuse\nsudo apt install s3fs -y\n# Fetch the credentials from the instance metadata service\nCREDENTIALS=$(curl http://169.254.169.254/latest/meta-data/iam/security-credentials/sd-ec2-role)\n\n# Parse the AccessKeyId and SecretAccessKey from the JSON\nACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '\"AccessKeyId\" : \"[^\"]*' | grep -o '[^\"]*$')\nSECRET_ACCESS_KEY=$(echo $CREDENTIALS | grep -o '\"SecretAccessKey\" : \"[^\"]*' | grep -o '[^\"]*$')\n\n# Store them in the .passwd-s3fs file\nTMP_FOLDER=/tmp\necho \"$ACCESS_KEY_ID:$SECRET_ACCESS_KEY\" > /tmp/.passwd-s3fs\nchmod 600 ${TMP_FOLDER}/.passwd-s3fs\nsudo chown ubuntu:ubuntu ${TMP_FOLDER}/.passwd-s3fs\n\n# Fix the foler name to /tmp/s3-mount and /tmp/efs-mount\nsudo mkdir -p /tmp/s3-mount\nsudo chown ubuntu:ubuntu /tmp/s3-mount\n\nsudo mkdir -p /tmp/efs-mount\nsudo chown ubuntu:ubuntu /tmp/efs-mount\n\n# var of the bucket name\nBUCKET_NAME=\"placeholder\"\nFS_ID=\"placeholder\"\nREGION=\"placeholder\"\n\ns3fs ",
+        {
+         "Ref": "sdmodels4ACC90E2"
+        },
+        " /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log\necho \"S3 bucket ${BUCKET_NAME} mounted at /tmp/s3-mount\"\n\nsudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${FS_ID}.efs.${REGION}.amazonaws.com:/ /tmp/efs-mount\necho \"EFS file system ${FS_ID} mounted at /tmp/efs-mount\"\n\n# cd /home/ubuntu\n\n# curl -sSL https://raw.githubusercontent.com/awslabs/stable-diffusion-aws-extension/main/install.sh | bash\n\n# cd stable-diffusion-webui/extensions/stable-diffusion-aws-extension\n# git checkout main\n# cd ../../\n\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/sd_xl_base_1.0.safetensors\n# wget -qP models/Stable-diffusion/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Stable-diffusion/v1-5-pruned-emaonly.safetensors\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth\n# wget -qP models/ControlNet/ https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors\n# wget -qP models/Lora/ https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors\n\n# sudo chown -R ubuntu:ubuntu /home/ubuntu/stable-diffusion-webui\n\n# cat > sd-webui.service <<EOF\n# [Unit]\n# Description=Stable Diffusion UI server\n# After=network.target\n# StartLimitIntervalSec=0\n\n# [Service]\n# WorkingDirectory=/home/ubuntu/stable-diffusion-webui\n# ExecStart=/home/ubuntu/stable-diffusion-webui/webui.sh --enable-insecure-extension-access --skip-torch-cuda-test --no-half --listen\n# Type=simple\n# Restart=always\n# RestartSec=3\n# User=ubuntu\n# StartLimitAction=reboot\n\n# [Install]\n# WantedBy=default.target\n\n# EOF\n# sudo mv sd-webui.service /etc/systemd/system\n# sudo chown root:root /etc/systemd/system/sd-webui.service\n\n# sudo systemctl enable sd-webui.service\n# sudo systemctl start sd-webui.service"
+       ]
+      ]
+     }
+    }
+   },
+   "DependsOn": [
+    "ASGInstanceRoleE263A41B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/LaunchConfig"
+   }
+  },
+  "ASG46ED3070": {
+   "Type": "AWS::AutoScaling::AutoScalingGroup",
+   "Properties": {
+    "LaunchConfigurationName": {
+     "Ref": "ASGLaunchConfigC00AF12B"
+    },
+    "MaxSize": "1",
+    "MinSize": "1",
+    "Tags": [
+     {
+      "Key": "Name",
+      "PropagateAtLaunch": true,
+      "Value": "stable-diffusion-on-ec2-dev/ec2-stack/ASG"
+     }
+    ],
+    "TargetGroupARNs": [
+     {
+      "Ref": "LBWebUITargetGroup95B77B10"
+     }
+    ],
+    "VPCZoneIdentifier": [
+     "subnet-83d4fce4",
+     "subnet-25487e0b",
+     "subnet-ad9368e0",
+     "subnet-704d792c",
+     "subnet-906a15ae",
+     "subnet-e4a34eea"
+    ]
+   },
+   "UpdatePolicy": {
+    "AutoScalingScheduledAction": {
+     "IgnoreUnmodifiedGroupSizeProperties": true
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/ASG"
+   }
+  },
+  "ASGScalingPolicyCpuScalingE8C25C1D": {
+   "Type": "AWS::AutoScaling::ScalingPolicy",
+   "Properties": {
+    "AutoScalingGroupName": {
+     "Ref": "ASG46ED3070"
+    },
+    "PolicyType": "TargetTrackingScaling",
+    "TargetTrackingConfiguration": {
+     "PredefinedMetricSpecification": {
+      "PredefinedMetricType": "ASGAverageCPUUtilization"
+     },
+     "TargetValue": 60
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/ASG/ScalingPolicyCpuScaling/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/31S227CMAz9lr2HbOu0DwB20SQ2IYr2ikxquow0QXECqqr++5yWdqBJe7J9fGI79snkfZbJuxs40UQV+4nRW9l8IAUs8gBqL1ZILnqFghmbhh5kM4tqj0HMd/bs9WYGhK2gh01T4MG4ukIbZJ96GgEBRBhITpNphYFqW4BsuNYCavSf6Ek7K3JtS4PB2ZdoVUjI6DB18FuhoZLNyhlMcGeXzmhVp/DXe7MUwCpcerfThodElckmRxW9DvWrd/GQaP8Db7b0SCSGYpeF/5CfOy432pFsXrhnXvNGq274q+jdRRvW4Mu0DTRAQSvjoNiC4cK8hSNPOj0c+CuQvrzg3KzLoU/vr+JLnuYO9swZ/It833L86UXYCojBkQLD3bk3B3kfjOwF8AG+5s7udBk9DGf5Q+2rrj3LiLFz6vcsV0A7iGFjkhA2rDZltJyeaG50pw3RaYZFWfIjMY8UXDWKM53/7LfCugLlN90eszv5KO9vvknriedF6wrlqrc/A89EIfgCAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "stable-diffusion-on-ec2-dev/ec2-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "referencetostablediffusiononec2devec2InstanceTypeCB5BC35BRef": {
+   "Type": "String"
+  }
+ },
+ "Outputs": {
+  "stablediffusiononec2devec2stacksdec2instance8698FE00Ref": {
+   "Value": {
+    "Ref": "sdec2instance50E90E64"
+   }
+  },
+  "stablediffusiononec2devec2stackLBC8556CC2DNSName": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LB8A12904C",
+     "DNSName"
+    ]
+   }
+  }
+ }
+}
