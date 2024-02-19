@@ -2,6 +2,7 @@ import { App, CfnOutput, CfnParameter, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { EC2Stack } from '../lib/common/ec2-stack';
 import { PipelineStack } from '../lib/pipeline/pipeline-stack';
+import { SpotStack } from '../lib/spot/spot-stack';
 
 export class StableDiffusionStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
@@ -28,6 +29,13 @@ export class StableDiffusionStack extends Stack {
     // const _pipelineStack = new PipelineStack(this, 'pipeline-stack', {
     //   env: props.env,
     // });
+
+    // Spot stack to create spot instance
+    const _spotStack = new SpotStack(this, 'spot-stack', {
+      // Placeholder for spot price
+      spotPrice: 0.5,
+      env: props.env,
+    });
 
     // output the EC2 instance id and ALB DNS name
     new CfnOutput(this, 'ec2-instance-id', {

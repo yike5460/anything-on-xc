@@ -1,4 +1,4 @@
-import { NestedStack, StackProps, Duration, Aws, RemovalPolicy } from 'aws-cdk-lib';
+import { NestedStack, StackProps, Duration, Aws, RemovalPolicy, Expiration } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -90,7 +90,7 @@ export class EC2Stack extends NestedStack {
         user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
         user_data.replace('${REGION}', Aws.REGION);
 
-        // Create EC2 instance inside default VPC
+        // Step 1, use single EC2 instance to setup S3 file gateway and EFS connection, launch webui as service and test the prototype. The user data script will be executed during the first boot cycle of an EC2 instance and is highly customizable depending on the application requirements.
         const _ec2Instance = new ec2.Instance(this, 'sd-ec2-instance', {
             vpc: _defaultVpc,
             role: _instanceRole,
@@ -122,14 +122,7 @@ export class EC2Stack extends NestedStack {
         // Allow EC2 instance to connect to EFS file system
         _efsFileSystem.connections.allowDefaultPortFrom(_ec2Instance);
 
-        // Mount EFS file system to EC2 instance
-        // const _efsMountTarget = new efs.CfnMountTarget(this, 'sd-efs-mount', {
-        //     fileSystemId: _efsFileSystem.fileSystemId,
-        //     subnetId: _defaultVpc.publicSubnets[0].subnetId,
-        //     securityGroups: [_ec2SecurityGroup.securityGroupId],
-        // });
-
-        // Application load balancer
+        // Stage 2, use application load balancer + auto scaling group to implement the webui cluster once the prototype is ready in step 1, and remove the single EC2 instance in step 1
         const lb = new elbv2.ApplicationLoadBalancer(this, 'LB', {
             vpc: _defaultVpc,
             internetFacing: true,
@@ -140,10 +133,19 @@ export class EC2Stack extends NestedStack {
             port: 7860,
             protocol: elbv2.ApplicationProtocol.HTTP,
         });
-      
-        // Auto Scaling Group
-        const asg = new autoscaling.AutoScalingGroup(this, 'ASG', {
-            vpc: _defaultVpc,
+
+        // Spot instance for cost saving
+        const launchTemplateSpotOptions: ec2.LaunchTemplateSpotOptions = {
+            blockDuration: Duration.minutes(60),
+            interruptionBehavior: ec2.SpotInstanceInterruption.STOP,
+            // Maximum hourly price will default to the on-demand price for the instance type.
+            // maxPrice: 1,
+            requestType: ec2.SpotRequestType.ONE_TIME
+        };
+        
+        // Launch template for auto scaling group
+        const launchTemplate = new ec2.LaunchTemplate(this, 'LaunchTemplate', {
+            spotOptions: launchTemplateSpotOptions,
             instanceType: new ec2.InstanceType(props.ec2InstanceType),
             machineImage: ec2.MachineImage.genericLinux({
                 'us-east-1': 'ami-0da2ab58cace8997d',
@@ -152,12 +154,31 @@ export class EC2Stack extends NestedStack {
                 deviceName: '/dev/sda1',
                 volume: autoscaling.BlockDeviceVolume.ebs(300),
             }],
-            keyName: 'us-east-1',
+            keyPair: ec2.KeyPair.fromKeyPairName(this, 'KeyPairASG', 'us-east-1'),
             securityGroup: _ec2SecurityGroup,
             userData: ec2.UserData.custom(user_data),
+        });
+
+        // Auto Scaling Group
+        const asg = new autoscaling.AutoScalingGroup(this, 'ASG', {
+            vpc: _defaultVpc,
+            // instanceType: new ec2.InstanceType(props.ec2InstanceType),
+            // machineImage: ec2.MachineImage.genericLinux({
+            //     'us-east-1': 'ami-0da2ab58cace8997d',
+            // }),
+            // blockDevices: [{
+            //     deviceName: '/dev/sda1',
+            //     volume: autoscaling.BlockDeviceVolume.ebs(300),
+            // }],
+            // keyName: 'us-east-1',
+            // securityGroup: _ec2SecurityGroup,
+            // userData: ec2.UserData.custom(user_data),
             maxCapacity: 1,
             minCapacity: 1,
+            // spotPrice: '0.05',
+            launchTemplate: launchTemplate,
         });
+
 
         // Add auto scaling group to load balancer
         listener.addTargets('Target', {
