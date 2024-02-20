@@ -34,6 +34,8 @@ export class StableDiffusionStack extends Stack {
     const _spotStack = new SpotStack(this, 'spot-stack', {
       // Placeholder for spot price
       spotPrice: 0.5,
+      // Assign the launch template ID with default value if not provided to skip the type validation
+      launchTemplateId: _ec2Stack._launchTemplateId || 'lt-0a1b2c3d4e5f6g7h8',
       env: props.env,
     });
 

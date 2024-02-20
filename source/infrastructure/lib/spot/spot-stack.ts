@@ -12,6 +12,7 @@ import * as fs from 'fs';
 interface spotStackProps extends StackProps {
     // Placeholder for spot price
     spotPrice: number;
+    launchTemplateId: string;
 }
 
 export class SpotStack extends NestedStack {
@@ -28,17 +29,19 @@ export class SpotStack extends NestedStack {
         */
 
         // Lambda function to retrieve the Spot Instance Pricing History and calculate the optimal maxPrice
-        const _spotPriceLambda = new lambda.Function(this, 'spot-price-lambda', {
-            runtime: lambda.Runtime.NODEJS_20_X,
-            handler: 'index.handler',
+        const _spotPriceLambda = new lambda.Function(this, 'spotPriceLambda', {
+            runtime: lambda.Runtime.PYTHON_3_10,
+            handler: 'spotPrice.lambda_handler',
             code: lambda.Code.fromAsset(path.join(__dirname, 'lambda')),
             environment: {
                 // Set the region to retrieve the Spot Instance Pricing History
                 REGION: Aws.REGION,
+                // Set the launch template ID
+                LAUNCH_TEMPLATE_ID: props.launchTemplateId,
             },
         });
 
-        // Grant the Lambda function permission to retrieve the Spot Instance Pricing History        
+        // Grant the Lambda function permission to retrieve the Spot Instance Pricing History
         _spotPriceLambda.addToRolePolicy(new iam.PolicyStatement({
             actions: [
                 'ec2:DescribeSpotPriceHistory',
@@ -54,6 +57,16 @@ export class SpotStack extends NestedStack {
             resources: ['*'],
         }));
 
+        // Grant the Lambda function permissions to EC2 launch template
+        _spotPriceLambda.addToRolePolicy(new iam.PolicyStatement({
+            actions: [
+                'ec2:DescribeLaunchTemplates',
+                'ec2:DescribeLaunchTemplateVersions',
+                'ec2:CreateLaunchTemplateVersion',
+                'ec2:ModifyLaunchTemplate',
+            ],
+            resources: ['*'],
+        }));
         // Store the optimal maxPrice in an SSM Parameter Store parameter
         const _maxPriceParameter = new ssm.StringParameter(this, 'SpotPriceParameter', {
             stringValue: '0.5',

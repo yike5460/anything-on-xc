@@ -20,6 +20,7 @@ export class EC2Stack extends NestedStack {
     _s3Name;
     _instanceId;
     _albAddress;
+    _launchTemplateId;
     constructor(scope: Construct, id: string, props: ec2StackProps) {
         super(scope, id, props);
 
@@ -195,5 +196,6 @@ export class EC2Stack extends NestedStack {
         this._s3Name = _modelsBucket.bucketName;
         this._instanceId = _ec2Instance.instanceId;
         this._albAddress = lb.loadBalancerDnsName;
+        this._launchTemplateId = launchTemplate.launchTemplateId;
     }
 }
