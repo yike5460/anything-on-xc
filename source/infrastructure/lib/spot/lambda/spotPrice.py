@@ -70,10 +70,10 @@ def lambda_handler(event, context):
                 'InstanceMarketOptions': {
                     'MarketType': 'spot',
                     'SpotOptions': {
-                        'MaxPrice': str(max_price)
+                        'MaxPrice': str(max_price),
+                        'BlockDurationMinutes': '60',
+                        'InstanceInterruptionBehavior': 'terminate'
                     },
-                    'SpotBlockDurationMinutes': '60',
-                    'SpotInterruptBehavior': 'terminate'
                 }
             }
         )
