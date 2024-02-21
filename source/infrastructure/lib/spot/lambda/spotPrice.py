@@ -71,7 +71,7 @@ def lambda_handler(event, context):
                     'MarketType': 'spot',
                     'SpotOptions': {
                         'MaxPrice': str(max_price),
-                        'BlockDurationMinutes': '60',
+                        'BlockDurationMinutes': 60,
                         'InstanceInterruptionBehavior': 'terminate'
                     },
                 }

@@ -11,6 +11,10 @@ sudo add-apt-repository ppa:deadsnakes/ppa -y
 sudo apt install wget git python3.10 python3.10-venv build-essential net-tools libgl1 libtcmalloc-minimal4 -y
 sudo update-alternatives --install /usr/bin/python3 python /usr/bin/python3.10 1
 
+: <<'COMMENTS'
+Function to attach EFS to the instance
+COMMENTS
+
 # install s3 fuse
 sudo apt install s3fs -y
 # Fetch the credentials from the instance metadata service
@@ -43,6 +47,10 @@ echo "S3 bucket ${BUCKET_NAME} mounted at /tmp/s3-mount"
 
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${FS_ID}.efs.${REGION}.amazonaws.com:/ /tmp/efs-mount
 echo "EFS file system ${FS_ID} mounted at /tmp/efs-mount"
+
+: <<'COMMENTS'
+Function to install the stable diffusion webui and start the service
+COMMENTS
 
 cd /home/ubuntu
 
@@ -85,3 +93,33 @@ sudo chown root:root /etc/systemd/system/sd-webui.service
 
 sudo systemctl enable sd-webui.service
 sudo systemctl start sd-webui.service
+
+: <<'COMMENTS'
+Create a script named shutdown-script.sh and include the necessary commands to perform the cleanup tasks. TODO: This can be replaced by the lifecycle hook in the Auto Scaling Group, more prototype needed though.
+COMMENTS
+
+cat > shutdown-script.sh <<EOF
+#!/bin/bash
+
+# Log file
+LOG_FILE="/var/log/ec2-shutdown.log"
+
+# Instance metadata service URL
+INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
+
+# Log the date and time of shutdown
+echo "Shutdown script started at $(date)" | tee -a $LOG_FILE
+
+# Query instance metadata for lifecycle action, refer to https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html
+LIFECYCLE_ACTION=$(curl -s "$INSTANCE_METADATA_URL/spot/instance-action" | jq -r .action)
+
+if [ "$LIFECYCLE_ACTION" = "stop" ] || [ "$LIFECYCLE_ACTION" = "terminate" ]; then
+  echo "Instance is being $LIFECYCLE_ACTION due to a rebalance recommendation." | tee -a $LOG_FILE
+  # TODO, (1) cleanup tasks here for on-going sd inference jobs; (2) record inference logs to S3; (3) unmount EFS if necessary
+else
+  echo "Instance is being shut down for another reason." | tee -a $LOG_FILE
+fi
+
+# Log the completion of the script
+echo "Shutdown script finished at $(date)" | tee -a $LOG_FILE
+EOF
