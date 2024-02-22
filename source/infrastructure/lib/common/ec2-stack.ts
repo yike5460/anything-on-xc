@@ -137,15 +137,17 @@ export class EC2Stack extends NestedStack {
 
         // Spot instance for cost saving
         const launchTemplateSpotOptions: ec2.LaunchTemplateSpotOptions = {
-            blockDuration: Duration.minutes(60),
+            // blockDuration: Duration.minutes(60),
             interruptionBehavior: ec2.SpotInstanceInterruption.STOP,
             // Maximum hourly price will default to the on-demand price for the instance type.
             // maxPrice: 1,
-            requestType: ec2.SpotRequestType.ONE_TIME
+            requestType: ec2.SpotRequestType.PERSISTENT,
+            validUntil: Expiration.after(Duration.days(7)),
         };
         
         // Launch template for auto scaling group with mixed instances policy (on-demand + spot)
         const launchTemplate = new ec2.LaunchTemplate(this, 'LaunchTemplate', {
+            // TODO: prototype needed. If you create an ASG with a launch template that has spotOptions defined but without a mixed instances policy, the ASG will only launch spot instances, not a mix of on-demand and spot instances.
             spotOptions: launchTemplateSpotOptions,
             instanceType: new ec2.InstanceType(props.ec2InstanceType),
             machineImage: ec2.MachineImage.genericLinux({
@@ -176,10 +178,20 @@ export class EC2Stack extends NestedStack {
             // userData: ec2.UserData.custom(user_data),
 
             // TODO, (1) consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template which we can set the maxPrice for spot instances; (2) consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
-            maxCapacity: 1,
+            maxCapacity: 5,
             minCapacity: 1,
             // spotPrice: '0.05',
-            launchTemplate: launchTemplate,
+            // launchTemplate: launchTemplate,
+            mixedInstancesPolicy: {
+                instancesDistribution: {
+                    // number of on-demand instances to keep in the auto scaling group
+                    onDemandBaseCapacity: 1,
+                    // percentage of on-demand instances above the base capacity
+                    onDemandPercentageAboveBaseCapacity: 50,
+                    spotAllocationStrategy: autoscaling.SpotAllocationStrategy.CAPACITY_OPTIMIZED,
+                },
+                launchTemplate: launchTemplate,
+            }
         });
 
 
