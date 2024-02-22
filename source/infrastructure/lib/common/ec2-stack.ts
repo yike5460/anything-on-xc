@@ -148,7 +148,16 @@ export class EC2Stack extends NestedStack {
         // Launch template for auto scaling group with mixed instances policy (on-demand + spot)
         const launchTemplate = new ec2.LaunchTemplate(this, 'LaunchTemplate', {
             // TODO: prototype needed. If you create an ASG with a launch template that has spotOptions defined but without a mixed instances policy, the ASG will only launch spot instances, not a mix of on-demand and spot instances.
-            spotOptions: launchTemplateSpotOptions,
+
+            // LONG NOTE ALERT: Now we use mixedInstancesPolicy to handle the spot instance request based on parameters like onDemandBaseCapacity, onDemandPercentageAboveBaseCapacity, and spotAllocationStrategy. In a mixed instances policy for an Auto Scaling group, we do not set interruptionBehavior, maxPrice, or requestType directly in the launch template because the Auto Scaling group manages the procurement of Spot Instances for us. Instead, we configure the policy to determine how Spot Instances are requested and maintained within the group as follows:
+
+            // Interruption Behavior: AWS Auto Scaling groups with a mixed instances policy do not directly expose an interruptionBehavior setting. However, you can achieve a similar result by enabling Capacity Rebalancing for your Auto Scaling group, which helps replace Spot Instances that AWS is about to reclaim due to price or capacity.
+
+            // Max Price: When you use a mixed instances policy, we can use spotPrice to specify a maximum price for Spot Instances. The Spot Instances are launched based on the spotAllocationStrategy and will not exceed the On-Demand price unless you specify otherwise.
+
+            // Request Type: The requestType for Spot Instances is managed by the Auto Scaling group when using a mixed instances policy. The Auto Scaling group will automatically manage the requests and maintain the target capacity.
+
+            // spotOptions: launchTemplateSpotOptions,
             instanceType: new ec2.InstanceType(props.ec2InstanceType),
             machineImage: ec2.MachineImage.genericLinux({
                 'us-east-1': 'ami-0da2ab58cace8997d',
@@ -180,6 +189,7 @@ export class EC2Stack extends NestedStack {
             // TODO, (1) consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template which we can set the maxPrice for spot instances; (2) consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
             maxCapacity: 5,
             minCapacity: 1,
+            // setting a spotPrice within a mixed instances policy can be a double-edged sword. On one hand, it can help control costs by ensuring that 23 never pay more for Spot Instances than you're willing to. On the other hand, it may reduce the availability of Spot Instances if our maximum price is often below the going Spot rate, potentially leading to a higher proportion of On-Demand Instances being used.
             // spotPrice: '0.05',
             // launchTemplate: launchTemplate,
             mixedInstancesPolicy: {
@@ -188,12 +198,12 @@ export class EC2Stack extends NestedStack {
                     onDemandBaseCapacity: 1,
                     // percentage of on-demand instances above the base capacity
                     onDemandPercentageAboveBaseCapacity: 50,
-                    spotAllocationStrategy: autoscaling.SpotAllocationStrategy.CAPACITY_OPTIMIZED,
+                    spotAllocationStrategy: autoscaling.SpotAllocationStrategy.PRICE_CAPACITY_OPTIMIZED,
                 },
                 launchTemplate: launchTemplate,
-            }
+            },
+            capacityRebalance: true,
         });
-
 
         // Add auto scaling group to load balancer
         listener.addTargets('Target', {

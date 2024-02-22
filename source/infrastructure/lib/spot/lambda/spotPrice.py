@@ -62,6 +62,8 @@ def lambda_handler(event, context):
         #         'MaxPrice': str(max_price)
         #     }
         # }
+
+        # TODO, update the spot price in CDK creating auto-scaling group instead according since we are using spot option in auto-scaling directly (not launch template) to control the spot intance attributes
         resp = ec2.create_launch_template_version(
             LaunchTemplateId = launch_template_id,
             #  The new version inherits the same launch parameters as the source version, except for parameters that you specify in LaunchTemplateData.
