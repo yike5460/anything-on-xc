@@ -85,11 +85,15 @@ export class EC2Stack extends NestedStack {
         });
 
         // TODO, remove the dep install part in user_data.sh and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
-        const user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8').replace('${BUCKET_NAME}', _modelsBucket.bucketName);
+        // Read the user data script into a string, replacing the bucket name placeholder
+        let user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8')
+                        .replace('${BUCKET_NAME}', _modelsBucket.bucketName);
 
-        // Further replace the FS_ID e.g. replace('${FS_ID}', _efsFileSystem.fileSystemId
-        user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
-        user_data.replace('${REGION}', Aws.REGION);
+        // Replace the file system ID placeholder
+        user_data = user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
+
+        // Replace the region placeholder
+        user_data = user_data.replace('${REGION}', Aws.REGION);
 
         // Step 1, use single EC2 instance to setup S3 file gateway and EFS connection, launch webui as service and test the prototype. The user data script will be executed during the first boot cycle of an EC2 instance and is highly customizable depending on the application requirements.
         const _ec2Instance = new ec2.Instance(this, 'sd-ec2-instance', {
@@ -169,6 +173,7 @@ export class EC2Stack extends NestedStack {
             keyPair: ec2.KeyPair.fromKeyPairName(this, 'KeyPairASG', 'us-east-1'),
             securityGroup: _ec2SecurityGroup,
             userData: ec2.UserData.custom(user_data),
+            role: _instanceRole,
         });
 
         // Auto Scaling Group
@@ -186,9 +191,10 @@ export class EC2Stack extends NestedStack {
             // securityGroup: _ec2SecurityGroup,
             // userData: ec2.UserData.custom(user_data),
 
-            // TODO, (1) consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template which we can set the maxPrice for spot instances; (2) consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
+            // TODO, (1) consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template with spotOptions; (2) consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
             maxCapacity: 5,
-            minCapacity: 1,
+            // Make sure at least 1 spot instance is running
+            minCapacity: 2,
             // setting a spotPrice within a mixed instances policy can be a double-edged sword. On one hand, it can help control costs by ensuring that 23 never pay more for Spot Instances than you're willing to. On the other hand, it may reduce the availability of Spot Instances if our maximum price is often below the going Spot rate, potentially leading to a higher proportion of On-Demand Instances being used.
             // spotPrice: '0.05',
             // launchTemplate: launchTemplate,
