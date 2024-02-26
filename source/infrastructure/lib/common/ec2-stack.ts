@@ -1,15 +1,18 @@
-import { NestedStack, StackProps, Duration, Aws, RemovalPolicy, Expiration } from 'aws-cdk-lib';
+import { NestedStack, StackProps, Duration, Aws, RemovalPolicy, Expiration, aws_autoscaling_hooktargets } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as efs from 'aws-cdk-lib/aws-efs';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
+import * as autoscalingtargets from 'aws-cdk-lib/aws-autoscaling-hooktargets';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 import * as path from 'path';
 import * as fs from 'fs';
+import { Lambda } from 'aws-cdk-lib/aws-ses-actions';
 
 interface ec2StackProps extends StackProps {
     ec2InstanceType: string;
@@ -191,24 +194,42 @@ export class EC2Stack extends NestedStack {
             // securityGroup: _ec2SecurityGroup,
             // userData: ec2.UserData.custom(user_data),
 
-            // TODO, (1) consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template with spotOptions; (2) consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
+            // TODO, (1) DONE, consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template with spotOptions; (2) DONE, consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
             maxCapacity: 5,
             // Make sure at least 1 spot instance is running
-            minCapacity: 2,
-            // setting a spotPrice within a mixed instances policy can be a double-edged sword. On one hand, it can help control costs by ensuring that 23 never pay more for Spot Instances than you're willing to. On the other hand, it may reduce the availability of Spot Instances if our maximum price is often below the going Spot rate, potentially leading to a higher proportion of On-Demand Instances being used.
-            // spotPrice: '0.05',
+            minCapacity: 3,
+            // Setting 'spotPrice' must not be set when 'launchTemplate' or 'mixedInstancesPolicy' is set
+            // spotPrice: '0.7',
             // launchTemplate: launchTemplate,
             mixedInstancesPolicy: {
                 instancesDistribution: {
                     // number of on-demand instances to keep in the auto scaling group
                     onDemandBaseCapacity: 1,
                     // percentage of on-demand instances above the base capacity
-                    onDemandPercentageAboveBaseCapacity: 50,
-                    spotAllocationStrategy: autoscaling.SpotAllocationStrategy.PRICE_CAPACITY_OPTIMIZED,
+                    onDemandPercentageAboveBaseCapacity: 30,
+                    spotAllocationStrategy: autoscaling.SpotAllocationStrategy.LOWEST_PRICE,
                 },
                 launchTemplate: launchTemplate,
             },
             capacityRebalance: true,
+        });
+
+        // Lambda function to pull system or application logs and upload them S3 before the instance is terminated
+        const sdLifecycleHookTarget = new lambda.Function(this, 'sd-lifecycle-hook-target', {
+            runtime: lambda.Runtime.PYTHON_3_10,
+            handler: 'lifecycleHook.lambda_handler',
+            code: lambda.Code.fromAsset(path.join(__dirname, 'lambda')),
+            environment: {
+                BUCKET_NAME: _modelsBucket.bucketName,
+            },
+        });
+
+        // Add lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated
+        asg.addLifecycleHook('sd-lifecycle-hook', {
+            lifecycleTransition: autoscaling.LifecycleTransition.INSTANCE_TERMINATING,
+            defaultResult: autoscaling.DefaultResult.CONTINUE,
+            heartbeatTimeout: Duration.minutes(5),
+            notificationTarget: new aws_autoscaling_hooktargets.FunctionHook(sdLifecycleHookTarget),
         });
 
         // Add auto scaling group to load balancer
