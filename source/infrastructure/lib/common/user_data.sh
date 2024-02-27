@@ -123,3 +123,34 @@ fi
 # Log the completion of the script
 echo "Shutdown script finished at $(date)" | tee -a $LOG_FILE
 EOF
+
+: <<'COMMENTS'
+TODO, collecting GPU Utilization Data and publish such metric to CloudWatch
+COMMENTS
+
+# Configure the AWS credentials
+aws configure set aws_access_key_id $ACCESS_KEY_ID
+aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
+aws configure set default.region ${REGION}
+
+# Create the GPU monitoring script
+cat <<'EOF' >/opt/gpu-monitoring.sh
+#!/bin/bash
+
+# Get the GPU utilization
+gpu_utilization=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
+
+# Get the Instance ID from the EC2 metadata
+instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+
+# Publish the GPU utilization to CloudWatch
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "GPUUtilization" \
+--value $gpu_utilization --dimensions InstanceId=$instance_id --unit Percent
+EOF
+
+# Make the script executable
+chmod +x /opt/gpu-monitoring.sh
+
+# Setup a cron job to run the script every minute
+(crontab -l 2>/dev/null; echo "* * * * * /opt/gpu-monitoring.sh") | crontab -
+

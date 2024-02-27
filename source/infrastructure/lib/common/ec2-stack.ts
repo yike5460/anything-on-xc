@@ -8,6 +8,7 @@ import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
 import * as autoscalingtargets from 'aws-cdk-lib/aws-autoscaling-hooktargets';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 
 import * as path from 'path';
@@ -77,6 +78,9 @@ export class EC2Stack extends NestedStack {
 
         // Allow EC2 instance to connect to SSM with full access for PVRE consideration
         _instanceRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMFullAccess'));
+
+        // Allow EC2 instance to write logs to CloudWatch
+        _instanceRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchFullAccess'));
 
         // Create EFS file system
         const _efsFileSystem = new efs.FileSystem(this, 'sd-efs', {
@@ -194,7 +198,7 @@ export class EC2Stack extends NestedStack {
             // securityGroup: _ec2SecurityGroup,
             // userData: ec2.UserData.custom(user_data),
 
-            // TODO, (1) DONE, consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template with spotOptions; (2) DONE, consider the spot instance interruption behavior using Capacity Rebalancing; (3) consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
+            // TODO, (1) DONE, consider to use mixedInstancesPolicy to combine on-demand and spot instances and note such policy is not supported for launch template with spotOptions; (2) DONE, consider the spot instance interruption behavior using Capacity Rebalancing; (3) Partial DONE, consider to use lifecycle hook to pull system or application logs and upload them S3 before the instance is terminated, refer to https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-capacity-rebalancing.html
             maxCapacity: 5,
             // Make sure at least 1 spot instance is running
             minCapacity: 3,
@@ -240,8 +244,30 @@ export class EC2Stack extends NestedStack {
         });
 
         // Enable auto scaling based on CPU utilization for now, TODO: update to GPU utilization
-        asg.scaleOnCpuUtilization('CpuScaling', {
-            targetUtilizationPercent: 60,
+        // asg.scaleOnCpuUtilization('CpuScaling', {
+        //     targetUtilizationPercent: 60,
+        // });
+        
+        // Define the custom CloudWatch metric for GPU utilization
+        const gpuUtilizationMetric = new cloudwatch.Metric({
+            namespace: 'AWS/EC2',
+            metricName: 'GPUUtilization',
+            dimensionsMap: {
+                InstanceId: _ec2Instance.instanceId,
+            },
+            statistic: 'average',
+        });
+
+        // Add target tracking scaling based on the custom GPU utilization metric
+        asg.scaleOnMetric('GpuScaling', {
+            metric: gpuUtilizationMetric,
+            scalingSteps: [
+                { upper: 10, change: -1 },
+                { lower: 10, change: 1 },
+                { lower: 20, change: 2 },
+                { lower: 30, change: 3 },
+            ],
+            cooldown: Duration.seconds(60),
         });
 
         this._s3Name = _modelsBucket.bucketName;
