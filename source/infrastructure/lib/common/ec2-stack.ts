@@ -268,6 +268,7 @@ export class EC2Stack extends NestedStack {
                 { lower: 30, change: 3 },
             ],
             cooldown: Duration.seconds(60),
+            adjustmentType: autoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
         });
 
         this._s3Name = _modelsBucket.bucketName;
