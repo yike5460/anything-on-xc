@@ -1,4 +1,6 @@
-# Tuturial on how to hosting Stable Diffusion WebUI on AWS EC2
+# Hosting Stable Diffusion WebUI/CompyUI/Other GenAI Application on AWS EC2
+
+For great flexibility and control, you can host Stable Diffusion WebUI/CompyUI/Other GenAI Application on AWS EC2. This tutorial will guide you through the process of setting up a scalable and cost-effective infrastructure to host Stable Diffusion WebUI/CompyUI/Other GenAI Application on AWS EC2.
 
 ## Key feature to consider
 
@@ -14,11 +16,12 @@
 - Consider to use custom chip, e.g. AWS Inferentia, to reduce the cost of running the cluster
 
 ## Architecture
+
 <img src='docs/images/architecture.png'>
 
 ## Note
-The transfer time of file from s3fs mounted folder to local EC2 folder is around 159 mb/s (e.g. sd xl base model, 6.5 * 1000 mb/41s) and the transfer time from local folder to s3fs mounted file is around 148 mb/s (6.5 * 1000 mb/44s)
+- The transfer time of file from s3fs mounted folder to local EC2 folder is around 159 mb/s (e.g. sd xl base model, 6.5 * 1000 mb/41s) and the transfer time from local folder to s3fs mounted file is around 148 mb/s (6.5 * 1000 mb/44s)
 
-The transfer time of file from EFS mounted (efs.PerformanceMode.GENERAL_PURPOSE/efs.ThroughputMode.BURSTING) folder to local EC2 folder is around 89 mb/s (6.5 * 1000 mb/73s) and the transfer time from local folder to EFS mounted file is around 97 mb/s (6.5 * 1000 mb/67s)
+- The transfer time of file from EFS mounted (efs.PerformanceMode.GENERAL_PURPOSE/efs.ThroughputMode.BURSTING) folder to local EC2 folder is around 89 mb/s (6.5 * 1000 mb/73s) and the transfer time from local folder to EFS mounted file is around 97 mb/s (6.5 * 1000 mb/67s)
 
-EFS mounted folder is using NFS protocol which is slower than s3fs mounted folder using S3API protocol judging from the transfer time. The possible reason for such speed can be the EFS is mounted in different AZ than the EC2 instance, the EFS is mounted in us-east-1a while the EC2 instance is in us-east-1b, the transfer time between different AZ is slower than the transfer time within the same AZ. The transfer time between different AZ is around 1.5x slower than the transfer time within the same AZ. Another possible reason is the EFS is mounted in BURSTING mode which is slower than PROVISIONED mode.
+- EFS mounted folder is using NFS protocol which is slower than s3fs mounted folder using S3API protocol judging from the transfer time. The possible reason for such speed can be the EFS is mounted in different AZ than the EC2 instance, the EFS is mounted in us-east-1a while the EC2 instance is in us-east-1b, the transfer time between different AZ is slower than the transfer time within the same AZ. The transfer time between different AZ is around 1.5x slower than the transfer time within the same AZ. Another possible reason is the EFS is mounted in BURSTING mode which is slower than PROVISIONED mode.
