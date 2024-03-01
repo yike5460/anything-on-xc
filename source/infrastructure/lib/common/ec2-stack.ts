@@ -99,9 +99,6 @@ export class EC2Stack extends NestedStack {
         // Replace the file system ID placeholder
         user_data = user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
 
-        // Replace the region placeholder
-        user_data = user_data.replace('${REGION}', Aws.REGION);
-
         // Step 1, use single EC2 instance to setup S3 file gateway and EFS connection, launch webui as service and test the prototype. The user data script will be executed during the first boot cycle of an EC2 instance and is highly customizable depending on the application requirements.
         const _ec2Instance = new ec2.Instance(this, 'sd-ec2-instance', {
             vpc: _defaultVpc,

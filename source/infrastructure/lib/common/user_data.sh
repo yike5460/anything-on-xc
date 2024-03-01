@@ -19,6 +19,8 @@ COMMENTS
 sudo apt install s3fs -y
 # Fetch the credentials from the instance metadata service
 CREDENTIALS=$(curl http://169.254.169.254/latest/meta-data/iam/security-credentials/sd-ec2-role)
+# Fetch the region from the instance metadata service
+REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
 
 # Parse the AccessKeyId and SecretAccessKey from the JSON
 ACCESS_KEY_ID=$(echo $CREDENTIALS | grep -o '"AccessKeyId" : "[^"]*' | grep -o '[^"]*$')
@@ -37,10 +39,9 @@ sudo chown ubuntu:ubuntu /tmp/s3-mount
 sudo mkdir -p /tmp/efs-mount
 sudo chown ubuntu:ubuntu /tmp/efs-mount
 
-# var of the bucket name
+# Such placeholders should be replaced by the actual values outside of the script in ec2-stack.ts
 BUCKET_NAME="placeholder"
 FS_ID="placeholder"
-REGION="placeholder"
 
 s3fs ${BUCKET_NAME} /tmp/s3-mount -o passwd_file=${TMP_FOLDER}/.passwd-s3fs & > ${TMP_FOLDER}/s3fs.log
 echo "S3 bucket ${BUCKET_NAME} mounted at /tmp/s3-mount"
@@ -140,12 +141,15 @@ cat <<'EOF' >/opt/gpu-monitoring.sh
 # Get the GPU utilization
 gpu_utilization=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
 
+# Get current instance region
+region=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+
 # Get the Instance ID from the EC2 metadata
 instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
 # Publish the GPU utilization to CloudWatch
 aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "GPUUtilization" \
---value $gpu_utilization --dimensions InstanceId=$instance_id --unit Percent
+--value $gpu_utilization --dimensions InstanceId=$instance_id --unit Percent --region $region
 EOF
 
 # Make the script executable
