@@ -8,7 +8,7 @@ export class StableDiffusionStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
     super(scope, id, props);
 
-    // cfn parameters dropdown list for ec2 instance type
+    // CFN parameters dropdown list for ec2 instance type
     const _ec2InstaceType = new CfnParameter(this, 'ec2InstanceType', {
       type: 'String',
       description: 'EC2 instance type',
@@ -19,9 +19,18 @@ export class StableDiffusionStack extends Stack {
       ],
     });
 
+    // CFN parameter to allow user specifies s3 path which store the user data script
+    const _userDataS3Path = new CfnParameter(this, 'userDataS3Path', {
+      type: 'String',
+      description: 'S3 path to the user data script',
+      // Empty string as default value to skip the type validation
+      default: '',
+    });
+
     // TODO, use cfn parameters or image id from pipeline stack
     const _ec2Stack = new EC2Stack(this, 'ec2-stack', {
       ec2InstanceType: _ec2InstaceType.valueAsString,
+      userDataS3Path: _userDataS3Path.valueAsString,
       env: props.env,
     });
 

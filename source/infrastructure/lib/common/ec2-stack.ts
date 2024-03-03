@@ -17,6 +17,7 @@ import { Lambda } from 'aws-cdk-lib/aws-ses-actions';
 
 interface ec2StackProps extends StackProps {
     ec2InstanceType: string;
+    userDataS3Path: string;
 }
 
 export class EC2Stack extends NestedStack {
@@ -92,12 +93,19 @@ export class EC2Stack extends NestedStack {
         });
 
         // TODO, remove the dep install part in user_data.sh and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
-        // Read the user data script into a string, replacing the bucket name placeholder
-        let user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8')
-                        .replace('${BUCKET_NAME}', _modelsBucket.bucketName);
-
-        // Replace the file system ID placeholder
-        user_data = user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
+        // Check if user input the S3 path for user data script, if not, read the default user data script from local file
+        let user_data = '';
+        if (props.userDataS3Path) {
+            // Read the user data script from S3 path instead of reading from local file directly
+            // TODO
+        } else {
+            // Read the default user data script from local file
+            user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8');
+            // Replace the file system ID placeholder
+            user_data = user_data.replace('${FS_ID}', _efsFileSystem.fileSystemId);
+        }
+        // let user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8')
+        //                 .replace('${BUCKET_NAME}', _modelsBucket.bucketName);
 
         // Step 1, use single EC2 instance to setup S3 file gateway and EFS connection, launch webui as service and test the prototype. The user data script will be executed during the first boot cycle of an EC2 instance and is highly customizable depending on the application requirements.
         const _ec2Instance = new ec2.Instance(this, 'sd-ec2-instance', {
