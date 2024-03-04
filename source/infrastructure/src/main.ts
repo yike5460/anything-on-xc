@@ -30,7 +30,7 @@ export class StableDiffusionStack extends Stack {
     // TODO, use cfn parameters or image id from pipeline stack
     const _ec2Stack = new EC2Stack(this, 'ec2-stack', {
       ec2InstanceType: _ec2InstaceType.valueAsString,
-      customUserDataPath: customUserDataPath.valueAsString,
+      customUserDataPath: _customUserDataPath.valueAsString,
       env: props.env,
     });
 
