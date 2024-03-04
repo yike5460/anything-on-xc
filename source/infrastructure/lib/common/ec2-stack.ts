@@ -17,7 +17,7 @@ import { Lambda } from 'aws-cdk-lib/aws-ses-actions';
 
 interface ec2StackProps extends StackProps {
     ec2InstanceType: string;
-    userDataS3Path: string;
+    customUserDataPath: string;
 }
 
 export class EC2Stack extends NestedStack {
@@ -95,9 +95,9 @@ export class EC2Stack extends NestedStack {
         // TODO, remove the dep install part in user_data.sh and pack all the dependencies into a new AMI to save cloud-init time (5+ mins for model download, SD setup, etc.)
         // Check if user input the S3 path for user data script, if not, read the default user data script from local file
         let user_data = '';
-        if (props.userDataS3Path) {
+        if (props.customUserDataPath) {
             // Read the user data script from S3 path instead of reading from local file directly
-            // TODO
+            user_data = fs.readFileSync(props.customUserDataPath, 'utf8');
         } else {
             // Read the default user data script from local file
             user_data = fs.readFileSync(path.join(__dirname, 'user_data.sh'), 'utf8');

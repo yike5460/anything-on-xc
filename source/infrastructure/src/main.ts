@@ -20,7 +20,7 @@ export class StableDiffusionStack extends Stack {
     });
 
     // CFN parameter to allow user specifies s3 path which store the user data script
-    const _userDataS3Path = new CfnParameter(this, 'userDataS3Path', {
+    const _customUserDataPath = new CfnParameter(this, 'customUserDataPath', {
       type: 'String',
       description: 'S3 path to the user data script',
       // Empty string as default value to skip the type validation
@@ -30,7 +30,7 @@ export class StableDiffusionStack extends Stack {
     // TODO, use cfn parameters or image id from pipeline stack
     const _ec2Stack = new EC2Stack(this, 'ec2-stack', {
       ec2InstanceType: _ec2InstaceType.valueAsString,
-      userDataS3Path: _userDataS3Path.valueAsString,
+      customUserDataPath: customUserDataPath.valueAsString,
       env: props.env,
     });
 
