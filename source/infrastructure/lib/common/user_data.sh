@@ -134,12 +134,24 @@ aws configure set aws_access_key_id $ACCESS_KEY_ID
 aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
 aws configure set default.region ${REGION}
 
-# Create the GPU monitoring script
+# Create the GPU monitoring script, note we choose to use CloudWatch custom metric instead of offcial AWS CloudWatch Agent for simplicity and flexibility, refer to https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-NVIDIA-GPU.html
 cat <<'EOF' >/opt/gpu-monitoring.sh
 #!/bin/bash
 
-# Get the GPU utilization
+# Get the GPU metrics
 gpu_utilization=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
+temperature_gpu=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits)
+power_draw=$(nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits)
+utilization_memory=$(nvidia-smi --query-gpu=utilization.memory --format=csv,noheader,nounits)
+fan_speed=$(nvidia-smi --query-gpu=fan.speed --format=csv,noheader,nounits)
+memory_total=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits)
+memory_used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
+memory_free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits)
+
+# Convert memory from megabytes to bytes for CloudWatch
+# memory_total_bytes=$((memory_total * 1024 * 1024))
+# memory_used_bytes=$((memory_used * 1024 * 1024))
+# memory_free_bytes=$((memory_free * 1024 * 1024))
 
 # Get current instance region
 region=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
@@ -147,9 +159,31 @@ region=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
 # Get the Instance ID from the EC2 metadata
 instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
-# Publish the GPU utilization to CloudWatch
+# Publish the GPU metrics to CloudWatch
 aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "GPUUtilization" \
 --value $gpu_utilization --dimensions InstanceId=$instance_id --unit Percent --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "TemperatureGPU" \
+--value $temperature_gpu --dimensions InstanceId=$instance_id --unit Celsius --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "PowerDraw" \
+--value $power_draw --dimensions InstanceId=$instance_id --unit Watts --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "MemoryUtilization" \
+--value $utilization_memory --dimensions InstanceId=$instance_id --unit Percent --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "FanSpeed" \
+--value $fan_speed --dimensions InstanceId=$instance_id --unit Percent --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "MemoryTotal" \
+--value $memory_total --dimensions InstanceId=$instance_id --unit Megabytes --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "MemoryUsed" \
+--value $memory_used --dimensions InstanceId=$instance_id --unit Megabytes --region $region
+
+aws cloudwatch put-metric-data --namespace "Custom/GPU" --metric-name "MemoryFree" \
+--value $memory_free --dimensions InstanceId=$instance_id --unit Megabytes --region $region
+
 EOF
 
 # Make the script executable
