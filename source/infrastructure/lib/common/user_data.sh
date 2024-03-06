@@ -134,7 +134,12 @@ aws configure set aws_access_key_id $ACCESS_KEY_ID
 aws configure set aws_secret_access_key $SECRET_ACCESS_KEY
 aws configure set default.region ${REGION}
 
-# Create the GPU monitoring script, note we choose to use CloudWatch custom metric instead of offcial AWS CloudWatch Agent for simplicity and flexibility, refer to https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-NVIDIA-GPU.html
+# Create the GPU monitoring script, note we choose to use CloudWatch custom metric instead of offcial AWS CloudWatch Agent for simplicity and flexibility, refer to https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-NVIDIA-GPU.html. Note there are still some specific metrics and features that the CloudWatch Agent may not support compared to what can be obtained through custom scripts using tools like nvidia-smi. Here are some additional metrics and features that you might be able to capture with a custom script, e.g.
+- ECC (Error Correcting Code) Errors: Information about ECC error counts, both volatile and aggregate, if the GPU supports ECC.
+- GPU Process Information: Details on the processes currently using the GPU, including process name, ID, and memory usage.
+- Performance State: The current performance state for the GPU, which can indicate whether the GPU is running at its base clock, memory clock, etc.
+- Memory Details: More granular details about memory usage, such as per-process memory usage, or error counts in memory sectors.
+
 cat <<'EOF' >/opt/gpu-monitoring.sh
 #!/bin/bash
 
@@ -147,11 +152,6 @@ fan_speed=$(nvidia-smi --query-gpu=fan.speed --format=csv,noheader,nounits)
 memory_total=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits)
 memory_used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
 memory_free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits)
-
-# Convert memory from megabytes to bytes for CloudWatch
-# memory_total_bytes=$((memory_total * 1024 * 1024))
-# memory_used_bytes=$((memory_used * 1024 * 1024))
-# memory_free_bytes=$((memory_free * 1024 * 1024))
 
 # Get current instance region
 region=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)

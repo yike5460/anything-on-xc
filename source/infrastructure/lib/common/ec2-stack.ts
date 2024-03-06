@@ -97,7 +97,7 @@ export class EC2Stack extends NestedStack {
         // Check if user input the S3 path for user data script, if not, read the default user data script from local file
         let user_data = '';
         if (props.customUserDataPath) {
-            // TODO
+            // TODO, do nothing for now
             Pass;
             // Read the user data script from S3 path instead of reading from local file directly
             // user_data = fs.readFileSync(props.customUserDataPath, 'utf8');
