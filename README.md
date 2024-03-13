@@ -1,4 +1,4 @@
-# Hosting Stable Diffusion WebUI/CompyUI/Other GenAI Application on AWS EC2
+# Hosting GenAI Application on AWS EC2
 
 For great flexibility and control, you can host Stable Diffusion WebUI/CompyUI/Other GenAI Application on AWS EC2. This tutorial will guide you through the process of setting up a scalable and cost-effective infrastructure to host Stable Diffusion WebUI/CompyUI/Other GenAI Application on AWS EC2.
 
