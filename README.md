@@ -4,7 +4,7 @@ For great flexibility and control, you can host Stable Diffusion WebUI/CompyUI/O
 
 ## Key feature to consider
 
-- Elastic scaling for 2C customer, the EC2 cluster will scale up to handle the request and vice versa when the request is high, the scaling time for a new EC2 instance come to available and ready to receive request should be under 2 minutes. The average launch time of EC2 instance is around 17-18 seconds according to benchmark ([benchmark script](../scripts/ec2-benchmark.sh))
+- Elastic scaling for 2C customer, the EC2 cluster will scale up to handle the request and vice versa when the request is high, the scaling time for a new EC2 instance come to available and ready to receive request should be under 2 minutes. The average launch time of EC2 instance is around 17-18 seconds according to benchmark ([benchmark script](./source/scripts/ec2-benchmark.sh))
 - API support for application integration without awareness of the underlying framework and infrastructure, e.g. WebUI/CompyUI
 - Optimized inference speed for 2C customer, the inference time should be around 2-3 seconds whether using asyn or syn mode
 - Support for Spot instance to reduce the cost of running the cluster, careful consideration should be taken to ensure the cluster can handle the spot instance termination
