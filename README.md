@@ -19,6 +19,41 @@ For great flexibility and control, you can host Stable Diffusion WebUI/CompyUI/O
 
 <img src='docs/images/architecture.png'>
 
+## Deployment
+Make sure you have prepared the following resources before deploying the infrastructure:
+- AWS credentials
+- AWS CDK (Cloud Development Kit) installed
+- Node.js installed
+
+### Step 1: Clone the repository
+```bash
+git clone https://github.com/yike5460/anything-on-xc.git
+```
+
+### Step 2: Install Node.js
+```bash
+sudo apt update
+sudo apt install nodejs
+sudo apt install npm
+```
+
+### Step 3: Install AWS CDK
+```bash
+npm install -g aws-cdk
+```
+
+### Step 4: Deploy the infrastructure
+```bash
+cd source/infrastructure
+npx cdk deploy
+```
+
+Such CDK will create the following resources:
+- 1 EC2 instance with user data to launch the sample Stable Diffusion WebUI along with AWS extension, for the purpose to go through the process of setting up the infrastructure, e.g. mount s3fs, collect GPU metric and adjusting the configuration to boot your own application
+- ASG with mixed instance policy to scale the EC2 instance, 1 on-demand instance and 1 spot instance, lifecycle hook to handle the spot instance termination
+- (Optional) EC2 image build pipeline to iterate the AMI with full automation, the AMI will be used to launch the EC2 instance 
+- (Optional) Lambda to monitor the hitorical spot instance price and update the launch templates spot instance configuration, however, such ec2.LaunchTemplateSpotOptions is not supported when using mixed instance policy since official provide built-in policy to handle the spot instance application, e.g. LOWEST_PRICE, CAPACITY_OPTIMIZED, etc.
+
 ## Note
 - The transfer time of file from s3fs mounted folder to local EC2 folder is around 159 mb/s (e.g. sd xl base model, 6.5 * 1000 mb/41s) and the transfer time from local folder to s3fs mounted file is around 148 mb/s (6.5 * 1000 mb/44s)
 
